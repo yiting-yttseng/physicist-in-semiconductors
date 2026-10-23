@@ -1,28 +1,31 @@
-# From Physics to Fab 從物理到晶圓廠
+English | [繁體中文](README.zh-TW.md)
 
-An interactive, pixel-style guide to the semiconductor industry, written by a physics PhD who is interested in it.
-這是一本由對半導體產業感興趣的物理學博士撰寫的互動式像素風格半導體產業指南。
+# From Physics to Fab
 
-**Live demo 線上看：** 
-https://yiting-yttseng.github.io/physicist-in-semiconductors/version/v08
-> Status: beta / under construction 測試版，內容持續更新中
+An interactive, pixel-style guide to the semiconductor industry,
+made by a physics PhD who wants to work in it.
 
-## What is this? 這是什麼
+**Live demo:** https://yiting-yttseng.github.io/physicist-in-semiconductors/
+> Status: beta, under construction
 
-這個網頁是一個互動式的教學網頁，可以讓我們更了解半導體產業的基礎知識。
-網頁涵蓋了2個部分：
-Part 1. 半導體產業介紹
-    - 半導體產業鏈
-    - 電晶體的結構：MOSFET、FinFET、GAA
-    - 角色介紹與分工
-    - 晶圓的製程流程 
+## What is this?
 
-Part 2. 新員工介紹：物理博士，凝態物理模擬
-    - 能力介紹 (Simulation, Data Analysis, Experiment & Collaboration)
-    - 我可以貢獻什麼? (模擬與數據分析、相關儀器與工具的原理介紹)
+An interactive page that explains how the semiconductor industry works,
+and where I could contribute.
 
-- 更多細節與內容將在未來被更新...
+**Part 1: Semiconductor basics**
+- The industry chain
+- Transistor structures: MOSFET, FinFET, GAA
+- Roles inside a company and who does what
+- The wafer process flow
 
-## 致謝
+**Part 2: Meet the new colleague**
+- A physics PhD in condensed-matter simulation
+- Skills: Simulation, Data Analysis, Experiment & Collaboration
+- What and how I can contribute
 
-版面靈感來自 fab24hr.com，設計與插圖由AI協助創作
+More details are coming.
+
+## Acknowledgements
+
+Layout inspired by fab24hr.com. Design and illustrations created with AI assistance.
