@@ -1,0 +1,966 @@
+<title>Fab to RD Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+TC:wght@400;500;700&family=Press+Start+2P&display=swap">
+<style>
+/* Layout: sticky nav with two parts; Part 1 = industry, transistor, R&D vs Fab, process flow, company map. Part 2 = me, skills, contribution, three roles. */
+:root{
+  --bg:#eef1f7; --panel:#ffffff; --ink:#1d2540; --muted:#5a6486; --line:#1d2540;
+  --floor:#dfe5f2; --accent:#e5484d; --shadow:rgba(29,37,64,.18);
+  --pe:#3b82f6; --mfg:#f59e0b; --ee:#22a06b; --lit:#8b5cf6; --fac:#64748b; --yed:#e5484d;
+  --tst:#0891b2; --cse:#be185d;
+  --pie:#ca8a04; --tt:#ec4899; --fb:#38bdf8; --dtco:#4f46e5;
+  --tcad:#84cc16; --ma:#92400e; --ap:#14b8a6; --rp:#1e3a8a;
+  --ae:#c026d3; --you:#e5484d;
+  --f-pix:'Press Start 2P',monospace; --f-jp:'DotGothic16','Noto Sans TC',sans-serif; --f-body:'Noto Sans TC',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1426; --panel:#181f38; --ink:#e8ecfa; --muted:#9aa5c8; --line:#0a0e1c; --floor:#222b4b; --shadow:rgba(0,0,0,.5);
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1426; --panel:#181f38; --ink:#e8ecfa; --muted:#9aa5c8; --line:#0a0e1c; --floor:#222b4b; --shadow:rgba(0,0,0,.5);
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding-block:0 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:1100px;margin:0 auto}
+h1{font-family:var(--f-pix);font-size:clamp(14px,3vw,22px);line-height:1.5;margin:0;text-wrap:balance}
+.sub{color:var(--muted);max-width:66ch;margin:6px 0 0;font-size:14px}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding:12px 0 8px;border-bottom:3px solid var(--line);margin-bottom:18px}
+.parts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pbtn{appearance:none;font-family:var(--f-pix);font-size:10px;line-height:1.4;padding:9px 12px;border:3px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.pbtn[aria-pressed="true"]{background:var(--accent);color:#fff;box-shadow:3px 3px 0 var(--shadow)}
+.pbtn:focus-visible,.toc a:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.toc{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.toc a{font-family:var(--f-jp);font-size:14px;color:var(--ink);text-decoration:none;border:2px solid var(--line);padding:2px 10px;background:var(--floor);cursor:pointer}
+.toc a:hover{background:var(--accent);color:#fff}
+section.blk{margin-top:26px;scroll-margin-top:150px}
+.hd{font-family:var(--f-pix);font-size:11px;line-height:1.6;margin:0 0 10px;padding:7px 10px;background:var(--ink);color:var(--bg)}
+.lead{margin:0 0 12px;color:var(--muted);max-width:72ch;font-size:14px}
+.card{background:var(--panel);border:3px solid var(--line);box-shadow:5px 5px 0 var(--shadow);padding:14px;min-width:0}
+.scroll{overflow-x:auto;padding-bottom:6px}
+.cap{font-size:12px;color:var(--muted);margin:6px 0 0}
+.tag2{display:inline-block;font-family:var(--f-jp);font-size:13px;border:2px solid var(--line);padding:1px 8px;margin:2px 4px 2px 0;background:var(--floor)}
+canvas.px{image-rendering:pixelated}
+
+/* industry matrix */
+.mx{display:grid;grid-template-columns:64px repeat(6,minmax(150px,1fr));gap:0;min-width:1000px;border:3px solid var(--line);background:var(--panel)}
+.mx>div{border-right:2px solid var(--floor);border-bottom:2px solid var(--floor);padding:8px;min-width:0}
+.mx .ch{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;background:var(--floor);border-bottom:3px solid var(--line)}
+.mx .ch canvas{width:64px;height:64px}
+.mx .ch b{font-family:var(--f-jp);font-size:14px;line-height:1.25}
+.mx .ch span{font-size:11px;color:var(--muted)}
+.mx .rl{display:flex;align-items:center;justify-content:center;font-family:var(--f-jp);font-size:16px;writing-mode:vertical-rl;background:var(--ink);color:var(--bg);letter-spacing:.2em}
+.co{margin:0 0 8px}
+.co b{display:block;font-size:14px}
+.co span{display:block;font-size:12px;color:var(--muted);line-height:1.35}
+
+/* transistor */
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+.tab{appearance:none;border:3px solid var(--line);background:var(--floor);color:inherit;font:inherit;cursor:pointer;padding:8px 6px;text-align:center;min-width:0}
+.tab b{display:block;font-family:var(--f-pix);font-size:10px;line-height:1.5;margin-bottom:2px}
+.tab span{font-size:12px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--accent);color:#fff;box-shadow:3px 3px 0 var(--shadow)}
+.tab[aria-selected="true"] span{color:#fff}
+.tab:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:1.15fr 1fr;gap:14px;align-items:start}
+.illu{border:2px solid var(--line);background:var(--bg);margin:6px 0 10px;padding:6px}
+.illu svg{display:block;width:100%;height:auto;max-height:340px}
+.illu svg text{font-family:var(--f-body);font-size:11px;fill:var(--ink);stroke:none}
+.illu svg .ln{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.illu svg .bx{fill:var(--floor);stroke:var(--ink);stroke-width:1.6}
+.illu svg .be{fill:none;stroke:#e6a400;stroke-width:2}
+.illu svg .rd{fill:none;stroke:#e5484d;stroke-width:2}
+.illu svg .gy{fill:none;stroke:var(--muted);stroke-width:1.4;stroke-dasharray:4 3}
+.sec{margin:12px 0 0}
+.sec h4{font-family:var(--f-jp);font-size:16px;margin:0 0 4px;color:var(--accent)}
+.sec p,.sec ul{margin:0;font-size:14px}
+.sec ul{padding-left:1.1em}
+.eq{font-family:var(--f-jp);background:var(--floor);border-left:6px solid var(--accent);padding:6px 10px;margin:6px 0;font-size:14px}
+.tl{margin-top:16px}
+.tl svg{display:block;width:100%;min-width:640px;height:auto}
+.tl svg text{font-family:var(--f-body);font-size:11px;fill:var(--ink)}
+
+/* R&D vs Fab */
+.rf{display:grid;grid-template-columns:1fr 70px 1fr;gap:10px;align-items:stretch}
+.rf .side{border:3px solid var(--line);background:var(--panel);padding:12px;box-shadow:5px 5px 0 var(--shadow);min-width:0}
+.rf h3{font-family:var(--f-pix);font-size:11px;margin:0 0 8px;line-height:1.5}
+.rf ul{margin:6px 0 0;padding-left:1.1em;font-size:14px}
+.rf .mid{display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-pix);font-size:9px;text-align:center;gap:6px;color:var(--muted)}
+.lots{display:block;width:100%;max-width:260px;height:auto;max-height:120px;margin:0 auto}
+
+/* flow */
+.flow{display:grid;grid-template-columns:78px repeat(8,minmax(112px,1fr));min-width:1020px;gap:0;border:3px solid var(--line);background:var(--panel)}
+.flow>div{border-right:2px solid var(--floor);border-bottom:2px solid var(--floor);padding:6px 4px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;justify-content:center}
+.flow .lane{background:var(--ink);color:var(--bg);font-family:var(--f-jp);font-size:13px;text-align:center;line-height:1.4;padding:4px}
+.flow .st{background:var(--floor);border-bottom:3px solid var(--line);text-align:center}
+.flow .st canvas{width:56px;height:56px}
+.flow .st b{font-family:var(--f-jp);font-size:14px;line-height:1.2}
+.flow .st span{font-size:10px;color:var(--muted);line-height:1.25}
+.flow .bar{grid-column:2 / span 8;flex-direction:row;justify-content:flex-start;gap:10px;padding:6px 10px;font-size:13px}
+.flow .bar .who{flex:none}
+.flow .barl{flex:1;min-width:0}
+.flow .ghost{margin-left:auto;border:2px dashed var(--muted);padding:2px 8px;font-size:12px;color:var(--muted)}
+.arrow{font-family:var(--f-pix);font-size:9px;color:var(--muted)}
+
+/* characters */
+.who{appearance:none;border:0;background:none;color:inherit;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;position:relative;min-width:0}
+.who canvas{width:48px;height:67px;image-rendering:pixelated;transition:transform .12s steps(2)}
+.who.s canvas{width:36px;height:50px}
+.who:hover canvas,.who:focus-visible canvas{transform:translateY(-3px)}
+.who:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.tag{font-family:var(--f-pix);font-size:8px;padding:3px 5px;color:#fff;background:var(--c);border:2px solid var(--line);letter-spacing:.02em}
+.nm{font-family:var(--f-jp);font-size:12px;text-align:center;line-height:1.3}
+.who.dim{opacity:.35}
+.who.hot .tag{box-shadow:0 0 0 3px var(--c)}
+.target::after{content:"TARGET";position:absolute;top:-2px;right:-4px;font-family:var(--f-pix);font-size:7px;background:var(--accent);color:#fff;padding:3px 4px;border:2px solid var(--line)}
+
+/* office map */
+.map{display:grid;grid-template-columns:1.4fr 1fr 1.4fr;gap:14px;align-items:start}
+.bld{background:var(--panel);border:3px solid var(--line);box-shadow:5px 5px 0 var(--shadow);padding:12px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.bld h2{font-family:var(--f-pix);font-size:11px;line-height:1.6;margin:0;padding:6px 8px;background:var(--ink);color:var(--bg);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.bld h2 small{font-family:var(--f-jp);font-size:13px;opacity:.85}
+.floor{position:relative;overflow:hidden;background:var(--floor);background-image:linear-gradient(var(--bg) 1px,transparent 1px),linear-gradient(90deg,var(--bg) 1px,transparent 1px);background-size:24px 24px;padding:14px 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 2px;align-content:start}
+.mid .floor{grid-template-columns:repeat(2,minmax(0,1fr))}
+.floor .gl{grid-column:1 / -1;font-family:var(--f-jp);font-size:12px;color:var(--muted);border-top:2px dashed var(--muted);padding-top:4px;margin-top:6px}
+.bgsvg{position:absolute;inset:0;width:100%;height:100%;opacity:.16;pointer-events:none;fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.bgsvg .fl{fill:var(--bg);stroke:none;opacity:.5}
+.callout{margin-top:14px;background:var(--panel);border:3px solid var(--line);border-left:10px solid var(--accent);padding:10px 14px;font-size:14px}
+.callout b{font-family:var(--f-jp);font-size:16px}
+
+/* part 2 */
+.me{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.me .bub{border:3px solid var(--line);background:var(--floor);padding:12px 16px}
+.me .bub p{margin:0 0 8px;font-size:15px}
+.me .bub p:last-child{margin:0}
+.me .bub b{font-family:var(--f-jp);font-size:16px}
+.skills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+.skill{background:var(--panel);border:3px solid var(--line);box-shadow:4px 4px 0 var(--shadow);padding:10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.skill canvas{width:144px;height:108px;max-width:100%}
+.skill b{font-family:var(--f-jp);font-size:15px}
+.skill span{font-size:13px;color:var(--muted);line-height:1.4}
+.skill.on{outline:4px solid var(--accent);outline-offset:2px}
+.ask{margin-top:26px;text-align:center}
+.ask .bubble{display:inline-block;max-width:100%;font-family:var(--f-pix);font-size:clamp(11px,2.4vw,16px);line-height:1.7;padding:14px 20px;background:var(--panel);border:3px solid var(--line);box-shadow:5px 5px 0 var(--shadow);position:relative}
+.ask .arr{font-family:var(--f-pix);font-size:22px;margin-top:8px;color:var(--accent)}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:10px}
+.rolebtn{appearance:none;border:3px solid var(--line);background:var(--panel);color:inherit;font:inherit;cursor:pointer;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:5px 5px 0 var(--shadow);min-width:0;text-align:center}
+.rolebtn[aria-pressed="true"]{background:var(--floor);outline:4px solid var(--c);outline-offset:1px}
+.rolebtn:focus-visible{outline:4px solid var(--ink)}
+.rolebtn .say{font-family:var(--f-jp);font-size:13px;background:var(--bg);border:2px solid var(--line);padding:2px 8px;position:relative}
+.rolebtn canvas{width:96px;height:134px;image-rendering:pixelated}
+.rolebtn b{font-family:var(--f-pix);font-size:10px;line-height:1.5}
+.rolebtn .ex{font-size:12px;color:var(--muted);line-height:1.4}
+.panel{margin-top:14px;background:var(--panel);border:3px solid var(--c,var(--line));box-shadow:5px 5px 0 var(--shadow);padding:14px}
+.panel h3{font-family:var(--f-pix);font-size:11px;line-height:1.6;margin:0 0 10px;padding:6px 8px;background:var(--c);color:#fff}
+.panel ul{margin:0;padding-left:1.1em;font-size:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.chip{font-family:var(--f-jp);font-size:13px;border:2px solid var(--line);padding:1px 8px;background:var(--floor)}
+.chip.main{background:var(--accent);color:#fff}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:10px}
+.tool{appearance:none;border:3px solid var(--line);background:var(--floor);color:inherit;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;box-shadow:3px 3px 0 var(--shadow);min-width:0}
+.tool:hover,.tool:focus-visible{transform:translate(-1px,-2px);outline:3px solid var(--accent);outline-offset:1px}
+.tool canvas{width:72px;height:72px;image-rendering:pixelated}
+.tool .nm{font-weight:700}
+.tool .kw{font-size:11px;color:var(--muted);text-align:center;line-height:1.35}
+.proj{margin-top:14px;border:3px dashed var(--accent);padding:12px;background:var(--bg)}
+.scene{display:flex;align-items:flex-end;justify-content:center;gap:6px;flex-wrap:wrap;background:var(--floor);border:2px solid var(--line);padding:10px}
+.scene canvas{image-rendering:pixelated}
+.btn{font-family:var(--f-pix);font-size:10px;background:var(--accent);color:#fff;border:3px solid var(--line);padding:10px 12px;cursor:pointer;box-shadow:3px 3px 0 var(--shadow)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.next{display:flex;justify-content:center;margin-top:26px}
+.foot{margin-top:26px;color:var(--muted);font-size:13px;max-width:84ch}
+
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(8,12,28,.62);display:flex;align-items:center;justify-content:center;padding:16px;z-index:40}
+.ov[hidden]{display:none}
+.dlg{background:var(--panel);border:3px solid var(--line);box-shadow:6px 6px 0 var(--shadow);width:min(720px,100%);max-height:calc(100% - 8px);overflow:auto;padding:16px 18px 18px;position:relative}
+.dlg h3{font-family:var(--f-pix);font-size:13px;line-height:1.6;margin:0 36px 10px 0;color:var(--ink)}
+.dlg .bar{height:8px;background:var(--c);margin:-16px -18px 14px;border-bottom:3px solid var(--line)}
+.x{position:absolute;top:14px;right:12px;font-family:var(--f-pix);font-size:12px;background:var(--panel);color:var(--ink);border:3px solid var(--line);width:32px;height:32px;cursor:pointer}
+.x:focus-visible{outline:3px solid var(--accent)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.col{border:2px solid var(--line);padding:10px 12px;min-width:0}
+.col h4{font-family:var(--f-pix);font-size:9px;margin:0 0 8px;color:var(--c)}
+.col p{margin:0;font-size:14px}
+.link{margin-top:12px;background:var(--floor);border-left:6px solid var(--c);padding:10px 12px;font-size:14px}
+.link b{font-family:var(--f-jp);font-size:15px}
+@media (max-width:760px){
+  .map{grid-template-columns:1fr}.cols{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}
+  .mid .floor{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .rf{grid-template-columns:1fr}.rf .mid{flex-direction:row}
+  .me{grid-template-columns:1fr;justify-items:center}
+  .skills,.three{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){.who canvas,.tool{transition:none}}
+
+/* ===== v7 additions ===== */
+.ptitle{font-family:var(--f-pix);font-size:clamp(13px,3vw,18px);margin:22px 0 4px;color:var(--accent)}
+.qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px}
+.qbox{border:3px solid var(--line);background:var(--panel);box-shadow:4px 4px 0 var(--shadow)}
+.qbox>button{appearance:none;width:100%;text-align:left;border:0;background:transparent;color:inherit;font-family:var(--f-jp);font-size:16px;line-height:1.5;padding:10px 12px;cursor:pointer;display:flex;gap:10px;align-items:center}
+.qbox>button:focus-visible{outline:4px solid var(--ink);outline-offset:-4px}
+.qbox .q{flex:none;font-family:var(--f-pix);font-size:14px;width:28px;height:28px;display:grid;place-items:center;background:var(--accent);color:#fff}
+.qbox .a{padding:2px 14px 14px;font-size:14px;border-top:3px dashed var(--line)}
+.qbox .a[hidden]{display:none}
+.qbox .a .btn{margin-top:8px}
+.prods{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.prod{border:3px solid var(--line);background:var(--panel);padding:12px 14px;border-top:10px solid var(--c);box-shadow:4px 4px 0 var(--shadow)}
+.prod h3{margin:0 0 2px;font-family:var(--f-pix);font-size:13px;color:var(--c)}
+.prod .zh{margin:0 0 10px;font-size:13px;color:var(--muted)}
+.prod dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 10px;font-size:14px}
+.prod dt{font-family:var(--f-jp);font-size:14px;color:var(--muted)}
+.prod dd{margin:0}
+.prod .kind{margin:10px 0 0;font-size:14px;border-top:2px dashed var(--line);padding-top:8px}
+#s-how{text-align:center}
+.qmark{display:inline-grid;place-items:center;width:64px;height:64px;font-family:var(--f-pix);font-size:34px;background:var(--accent);color:#fff;border:3px solid var(--line);box-shadow:4px 4px 0 var(--shadow)}
+.qtext{font-family:var(--f-jp);font-size:20px;margin:12px 0}
+#s-how .callout{text-align:left}
+.flow .ghost{display:flex;align-items:center;gap:8px;padding:4px 8px}
+.flow .ghost .who{flex:none}
+.skill canvas{max-width:100%}
+.mini{width:30px;height:22px;image-rendering:pixelated;vertical-align:-5px;margin-right:6px}
+.sim-more{margin-top:14px}
+.sim-more table{border-collapse:collapse;width:100%;font-size:13px}
+.sim-more th,.sim-more td{border:2px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.sim-more th{background:var(--floor);font-family:var(--f-jp);font-size:14px}
+.sim-more a{color:var(--accent)}
+.note{border-left:8px solid var(--c,var(--accent));background:var(--floor);padding:8px 12px;margin:10px 0;font-size:14px}
+
+</style>
+<div class="wrap">
+  <header class="nav" id="nav">
+    <h1>FROM PHYSICS TO FAB</h1>
+    <p class="sub">一個物理博士怎麼看半導體，以及我能在哪裡幫上忙。版面靈感來自 fab24hr.com 的晶圓廠遊戲。</p>
+    <div class="parts" role="group" aria-label="Parts">
+      <button class="pbtn" id="b1" type="button" aria-pressed="true">PART 1　半導體介紹</button>
+      <button class="pbtn" id="b2" type="button" aria-pressed="false">PART 2　我的介紹</button>
+    </div>
+    <nav class="toc" id="toc" aria-label="Table of contents"></nav>
+  </header>
+
+  <main id="part1">
+    <h2 class="ptitle">Part 1　半導體介紹</h2>
+    <div class="qs" id="qs"></div>
+
+    <section class="blk" id="s-chain">
+      <h2 class="hd">1　半導體產業鏈</h2>
+      <p class="lead">從左到右是一顆晶片從設計到被客人用到的路。每一格只放我認為最具代表性、一聽就知道的公司，所以有些格子只有一家，或是空的。不是排名。</p>
+      <div class="card scroll"><div class="mx" id="mx"></div></div>
+      <p class="cap">台灣晶圓代工（TSMC）接的是 IC 設計公司的訂單；有些公司兩邊都做，叫 IDM（Integrated Device Manufacturer，整合元件製造商），例如 Infineon。設備商（如 ZEISS、TRUMPF）在「設備」這一欄，是整條產業鏈的上游。</p>
+    </section>
+
+    <section class="blk" id="s-tr">
+      <h2 class="hd">2　產品：晶片裡的電晶體</h2>
+      <p class="lead">一顆晶片裡有數十億個電晶體，每一個都是由電壓控制的開關。結構一共換過三種，依序出現。</p>
+      <div class="prods" id="prods"></div>
+    </section>
+
+    <section class="blk" id="s-how">
+      <div class="qmark" aria-hidden="true">?</div>
+      <p class="qtext">這麼複雜微小的東西，應該要怎麼被製造出來呢？</p>
+      <div class="callout" id="howAns"></div>
+    </section>
+
+    <section class="blk" id="s-org">
+      <h2 class="hd">3　公司內部結構：產線、研發，和中間連接的人</h2>
+      <p class="lead">同一種顏色的角色做同一類工作，一邊在量產、一邊在定義新製程。右邊下半是研發專屬的角色，在產線沒有直接對應。滑過角色，另一邊同色的人會一起亮起來。</p>
+      <div class="map" id="map">
+        <section class="bld" aria-label="Fab line"><h2>FAB LINE <small>量產線</small></h2><div class="floor" id="left"></div></section>
+        <section class="bld mid" aria-label="Connectors"><h2>CONNECT <small>連接者</small></h2><div class="floor" id="mid"></div></section>
+        <section class="bld" aria-label="RD office"><h2>RD OFFICE <small>研發</small></h2><div class="floor" id="right"></div></section>
+      </div>
+    </section>
+
+    <section class="blk" id="s-flow">
+      <h2 class="hd">4　一片晶圓的旅程：八個大步驟，誰負責哪一步</h2>
+      <p class="lead">前五步會一層一層重複很多次，每隔幾層就檢測一次。上排是研發階段誰在定義這一步，下排是量產時誰負責。點人物看他做什麼。虛線框是公司外部的人。</p>
+      <div class="card scroll"><div class="flow" id="flow"></div></div>
+      <div class="next"><button class="btn" id="to2" type="button">NEXT：認識新同事 ▶</button></div>
+    </section>
+  </main>
+
+  <main id="part2" hidden>
+    <section class="blk" id="s-me">
+      <h2 class="hd">新同事 YITING</h2>
+      <div class="card">
+        <div class="me">
+          <canvas class="px" id="meCv" width="16" height="23" style="width:112px;height:161px" aria-label="Yi-Ting pixel portrait" role="img"></canvas>
+          <div class="bub">
+            <p><b>Education</b>　Bachelor to PhD: Physics Department</p>
+            <p><b>PhD research</b>　Simulation of molecular materials. I simulate how electrons behave, and how that behavior shows up in observables such as the spectral function and magnetic properties, to find the physical mechanism behind unusual phenomena.</p>
+          </div>
+        </div>
+        <div class="skills" id="skills"></div>
+      </div>
+    </section>
+
+    <section class="blk" id="s-ask">
+      <h2 class="hd">What and how can I contribute</h2>
+      <div class="ask"><div class="bubble">What and how can I contribute?</div><div class="arr">▼</div></div>
+    </section>
+
+    <section class="blk" id="s-roles">
+      <p class="lead">我覺得比較可行的三個位置（點一下角色，看看這個位置在做什麼）</p>
+      <div class="three" id="three"></div>
+      <div id="rolePanel"></div>
+    </section>
+    <div class="next"><button class="btn" id="to1" type="button">◀ BACK：半導體介紹</button></div>
+  </main>
+
+  <p class="foot">內容為原型，用公開資訊與一般產業常識整理，職稱與分工依公司而異。像素角色與插畫為原創，版面靈感來自 fab24hr.com；電晶體年份依公開文獻，標「約」的是不同來源略有出入。</p>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#e6a400"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#e5484d"/></marker></defs></svg>
+<div class="ov" id="ov" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dt" id="dlg">
+    <div class="bar" id="dbar"></div>
+    <button class="x" id="dx" type="button" aria-label="Close">X</button>
+    <div id="dbody"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- tool icons (32x32 pixel) ---------- */
+function icon(cv,fn){var x=cv.getContext('2d');x.clearRect(0,0,32,32);function R(a,b,w,h,c){x.fillStyle=c;x.fillRect(a,b,w,h)}fn(R,x)}
+function microscope(R){R(5,28,22,3,'#475569');R(20,9,4,19,'#64748b');R(11,6,13,4,'#64748b');R(10,10,6,10,'#94a3b8');R(11,20,4,4,'#334155');R(7,26,18,2,'#cbd5e1')}
+var ICONS={
+ bf:function(R){microscope(R);for(var i=0;i<3;i++)R(12-i,24+i-1,4+2*i,1,'#fde047');R(14,25,0,0,'#000');R(14,27,0,0,'#000')},
+ df:function(R){microscope(R);for(var i=0;i<10;i++){R(3+i,6+i*2,2,2,'#fde047');R(27-i,6+i*2,2,2,'#fde047')}R(15,25,3,3,'#ef4444');R(14,24,5,1,'#fecaca');R(16,23,1,1,'#fff')},
+ sem:function(R){R(13,1,6,4,'#facc15');R(12,5,8,15,'#94a3b8');R(10,8,12,2,'#475569');R(10,13,12,2,'#475569');R(10,17,12,2,'#475569');R(15,20,2,3,'#38bdf8');R(4,22,24,7,'#64748b');R(7,24,7,4,'#0ea5e9');R(20,24,6,4,'#0f172a');R(21,25,2,2,'#4ade80');R(2,29,28,3,'#475569')},
+ ebi:function(R){R(13,1,6,4,'#facc15');for(var i=0;i<8;i++)R(15-i,5+i,2+2*i,1,'#7dd3fc');R(3,19,26,4,'#94a3b8');R(3,23,26,6,'#475569');R(7,13,4,6,'#64748b');R(8,19,2,10,'#64748b');R(21,13,4,6,'#64748b');R(20,10,6,3,'#fde047');R(22,6,2,3,'#fde047');R(21,7,4,1,'#fde047')},
+ elec:function(R){R(11,1,10,7,'#0f172a');for(var i=0;i<7;i++)R(12+i,6-Math.floor(i*i/10),1,1,'#4ade80');for(var j=0;j<16;j++){R(6+Math.round(j*5/15),8+j,1,1,'#1e293b');R(25-Math.round(j*5/15),8+j,1,1,'#1e293b')}R(2,22,28,4,'#64748b');R(6,20,20,2,'#38bdf8');R(10,23,0,0,'#000');R(10,19,3,1,'#facc15');R(19,19,3,1,'#facc15');R(2,26,28,4,'#475569')},
+ map:function(R,x){x.fillStyle='#cbd5e1';for(var j=0;j<32;j++)for(var i=0;i<32;i++){var dx=i+.5-16,dy=j+.5-16;if(dx*dx+dy*dy<=15*15)x.fillRect(i,j,1,1)}for(var gx=4;gx<=26;gx+=4)for(var gy=4;gy<=26;gy+=4){var ex=gx+1.5-16,ey=gy+1.5-16,d=ex*ex+ey*ey;if(d<=12*12){R(gx,gy,3,3,(d>8.5*8.5||(gx===16&&gy===12))?'#ef4444':'#4ade80')}}}
+};
+
+/* ---------- tool illustrations (concept drawings) ---------- */
+function waferMap(kind){
+  var s='<svg viewBox="0 0 150 150" width="150" height="150" aria-hidden="true"><circle cx="75" cy="75" r="70" class="bx"/>';
+  for(var gx=15;gx<=129;gx+=12)for(var gy=15;gy<=129;gy+=12){var ex=gx+5-75,ey=gy+5-75,d=Math.sqrt(ex*ex+ey*ey);if(d<=66){
+    var bad=kind==='edge'?d>52:(kind==='scratch'?Math.abs((ey)-(ex*0.5)-6)<7:((ex+30)*(ex+30)+(ey-20)*(ey-20)<260));
+    s+='<rect x="'+gx+'" y="'+gy+'" width="10" height="10" fill="'+(bad?'#e5484d':'#4ade80')+'" opacity="'+(bad?1:.75)+'"/>'}}
+  return s+'</svg>';
+}
+var SVG={
+ bf:'<svg viewBox="0 0 360 230"><rect class="bx" x="50" y="190" width="260" height="10"/><circle cx="180" cy="184" r="6" fill="#e5484d"/><circle class="bx" cx="52" cy="70" r="14" style="fill:#fde68a"/><path class="be" d="M66 70H168" marker-end="url(#ah)"/><rect class="bx" x="170" y="56" width="20" height="28"/><path class="ln" d="M170 84L190 56"/><rect class="bx" x="163" y="104" width="34" height="38"/><path class="be" d="M180 84V182" marker-end="url(#ah)"/><path class="gy" d="M172 182L160 146M188 182L200 146"/><path class="be" d="M196 100V86" style="stroke-dasharray:3 2"/><rect class="bx" x="165" y="8" width="30" height="24"/><path class="be" d="M180 54V34" marker-end="url(#ah)"/><text x="22" y="100">光源</text><text x="200" y="72">分光鏡</text><text x="204" y="126">物鏡</text><text x="200" y="22">偵測器（相機）</text><text x="236" y="210">晶圓表面</text><text x="196" y="176" style="fill:#e5484d">缺陷</text><text x="206" y="150" style="fill:var(--muted)">被缺陷散開的光不回偵測器，該處變暗</text></svg>',
+ df:'<svg viewBox="0 0 360 230"><rect class="bx" x="50" y="190" width="260" height="10"/><circle cx="180" cy="184" r="6" fill="#e5484d"/><rect class="bx" x="160" y="70" width="40" height="44"/><rect class="bx" x="165" y="18" width="30" height="24"/><path class="ln" d="M180 42V70"/><path class="be" d="M40 60L172 182" marker-end="url(#ah)"/><path class="be" d="M320 60L188 182" marker-end="url(#ah)"/><path class="gy" d="M188 182L300 70M172 182L60 70"/><path class="rd" d="M180 176L172 118M180 176L188 118" marker-end="url(#ahr)"/><text x="14" y="52">斜向照明</text><text x="272" y="52">斜向照明</text><text x="206" y="94">物鏡（只收向上的光）</text><text x="204" y="26">偵測器</text><text x="216" y="146" style="fill:var(--muted)">平整表面的反射光</text><text x="216" y="160" style="fill:var(--muted)">斜向射出，收不到</text><text x="196" y="176" style="fill:#e5484d">缺陷散射</text><text x="212" y="212">黑背景上出現亮點</text></svg>',
+ sem:'<svg viewBox="0 0 360 250"><rect class="bx" x="162" y="8" width="36" height="22" style="fill:#fde68a"/><rect class="bx" x="150" y="52" width="60" height="14"/><rect class="bx" x="150" y="88" width="60" height="14"/><rect class="bx" x="148" y="124" width="64" height="16"/><path class="be" d="M180 30V190" marker-end="url(#ah)"/><rect class="bx" x="70" y="196" width="220" height="14"/><path class="ln" d="M180 196C160 196 152 214 170 224C180 232 190 232 192 224C206 214 200 196 180 196" style="fill:#fecaca"/><rect class="bx" x="244" y="150" width="40" height="18"/><path class="rd" d="M190 194C200 170 226 160 242 160" marker-end="url(#ahr)"/><path class="gy" d="M172 194L128 150"/><text x="206" y="23">電子槍</text><text x="218" y="63">聚光透鏡</text><text x="218" y="99">掃描線圈</text><text x="220" y="136">物鏡</text><text x="76" y="190">樣品（晶圓）</text><text x="226" y="184">二次電子偵測器</text><text x="60" y="145" style="fill:var(--muted)">背向散射電子</text><text x="204" y="228" style="fill:#e5484d">作用體積</text></svg>',
+ ebi:'<svg viewBox="0 0 360 250"><rect class="bx" x="30" y="170" width="300" height="50" style="fill:#c8cfe0"/><rect class="bx" x="30" y="110" width="300" height="60"/><rect class="bx" x="90" y="110" width="24" height="110" style="fill:#94a3b8"/><rect class="bx" x="246" y="110" width="24" height="34" style="fill:#94a3b8"/><path class="rd" d="M240 144L276 156M276 144L240 156"/><path class="be" d="M102 80V108" marker-end="url(#ah)"/><path class="be" d="M258 80V108" marker-end="url(#ah)"/><text x="46" y="70">電子束</text><text x="36" y="236">基板（接地）</text><text x="82" y="102">接點 A</text><text x="238" y="102">接點 B</text><text x="108" y="184">接到基板，電荷導走</text><text x="204" y="168" style="fill:#e5484d">中間斷開</text><text x="206" y="182" style="fill:#e5484d">電荷留在接點</text><text x="278" y="130" style="fill:#e5484d">+ + +</text><circle cx="102" cy="30" r="14" style="fill:#475569"/><circle cx="258" cy="30" r="14" style="fill:#e2e8f0"/><text x="82" y="12">影像 A</text><text x="238" y="12">影像 B</text></svg>',
+ elec:'<svg viewBox="0 0 360 230"><rect class="bx" x="20" y="170" width="170" height="14"/><rect class="bx" x="34" y="156" width="142" height="14" style="fill:#bae6fd"/><rect class="bx" x="62" y="150" width="20" height="6" style="fill:#fde68a"/><rect class="bx" x="128" y="150" width="20" height="6" style="fill:#fde68a"/><path class="ln" d="M40 70L72 148M170 70L138 148"/><rect class="bx" x="70" y="20" width="70" height="40"/><path class="ln" d="M72 60V70M138 60V70"/><path d="M200 140H340M214 20V150" class="ln" marker-end="url(#ah)"/><path d="M216 140C250 138 270 120 292 60" class="ln" style="stroke:#22a06b;stroke-width:2.4"/><path d="M216 140C250 132 262 90 266 40" class="ln" style="stroke:#e5484d;stroke-dasharray:5 3;stroke-width:2.4"/><text x="226" y="14">電流 I</text><text x="304" y="156">電壓 V</text><text x="296" y="64" style="fill:#22a06b">正常</text><text x="270" y="40" style="fill:#e5484d">漏電偏大</text><text x="24" y="206">探針落在測試結構的接墊上</text><text x="78" y="46">源量測單元</text></svg>',
+ map:'WAFERMAP'
+};
+var TOOLS=[
+ {k:'map',name:'晶圓圖與資料',kw:['wafer map','空間圖樣','分類／聚類'],
+  how:'每個晶粒（die）標記通過或失敗，或缺陷數量，畫成晶圓圖。再用程式把圖樣分類、和製程站別與機台的紀錄對起來。',
+  phys:'圖樣的形狀暗示成因。邊緣一圈常和邊緣的製程均勻性有關；一條線常是機械接觸或研磨造成的刮痕；隨機分布的點多半是粒子。這是經驗法則，要靠其他儀器確認。',
+  sig:'你要看的是「哪裡」「多少」「和什麼同時發生」。',
+  me:'這是我最直接能做的事：寫分析腳本、分類、統計檢定、把結果畫成別人看得懂的圖。'},
+ {k:'bf',name:'明場檢測',kw:['反射光','die-to-die 比對','繞射極限'],
+  how:'用光照亮晶圓，掃描整片，找出和相鄰晶粒不一樣的位置，輸出缺陷座標清單。速度快，適合整片普查。',
+  phys:'光垂直照射，平整表面的反射光回到偵測器；缺陷會改變反射或把光散開，該處灰階就不同。偵測靠比對相鄰晶粒的影像。光有波長，所以太小的缺陷訊號會變很弱。',
+  sig:'缺陷表現為相對相鄰晶粒的灰階差。',
+  me:'光的反射、繞射與成像極限我有理論基礎。我沒有操作過這類機台，原理可以講。'},
+ {k:'df',name:'暗場檢測',kw:['散射光','粒徑','黑背景亮點'],
+  how:'用斜向的光照亮晶圓，只收散射光。表面乾淨就是黑的，有粒子或刮痕就亮起來，靈敏度高，常用來抓粒子。',
+  phys:'平整表面把光反射到收不到的方向。缺陷把光散射到各個方向，一部分進入物鏡。對很小的粒子，散射強度隨粒徑急遽下降（瑞利散射，約與粒徑的六次方成正比），所以越小越難抓。',
+  sig:'亮點的強度對應散射截面，不能直接當尺寸。',
+  me:'散射理論我學過，也熟悉訊號強度與尺寸的關係。實機沒操作過。'},
+ {k:'sem',name:'SEM 缺陷檢視',kw:['二次電子','聚焦電子束','nm 級解析度'],
+  how:'檢測機給座標，SEM 開過去拍高解析影像，看缺陷長什麼樣、在哪一層，再分類。檢視比普查慢很多，所以只看被挑出來的點。',
+  phys:'電子槍發射電子，加速後用磁透鏡聚成很細的束，在樣品上逐行掃描。入射電子激發出能量很低的二次電子，只有表面幾 nm 內的能逃出，所以對形貌敏感；背向散射電子則和原子序有關，可以分辨材料。',
+  sig:'亮暗代表出射電子多寡，對應形貌或材料差異。',
+  me:'電子能量、逃逸深度和表面敏感度，和我的 ARPES 光電子實驗是同一組概念。我沒有操作過 SEM，原理可以講。'},
+ {k:'ebi',name:'電子束電壓對比',kw:['充電','電壓對比','開路／短路'],
+  how:'用電子束掃描，從影像的亮暗看出哪些接點電性連通、哪些斷開，不需要切開晶片，連埋在下面的缺陷也看得到。',
+  phys:'電子束打到接點上會讓它帶電。接到基板的接點，電荷被導走；斷開的接點電荷留下，電位改變，二次電子射出的多寡就變了，影像亮暗不同。亮或暗取決於束的能量與材料，要看設定。',
+  sig:'亮暗差異等於電位差異，間接告訴你電性是否連通。',
+  me:'電位、能帶彎曲與帶電的概念我熟。實際儀器我沒操作過。'},
+ {k:'elec',name:'電性量測',kw:['I-V','C-V','探針台'],
+  how:'探針落在測試結構的接墊上，量電流與電壓的關係，判斷開路、短路、漏電。目的是確認物理上的缺陷會不會真的讓元件失效。',
+  phys:'電流隨電壓的曲線反映材料與介面的性質。漏電偏大、閾值電壓偏移，都會在曲線上看得到。電容隨電壓的變化則反映介電層與介面狀態。',
+  sig:'曲線的形狀與偏移量，比單一數值更有資訊。',
+  me:'半導體物理基礎我有，但沒做過晶圓級電性量測。這是我需要補的部分。'}
+];
+
+var BSVG={
+ planar:'<svg viewBox="0 0 360 245"><rect class="bx" x="20" y="150" width="320" height="70" style="fill:#d7dce8"/><rect class="bx" x="52" y="132" width="78" height="44" style="fill:#93c5fd"/><rect class="bx" x="230" y="132" width="78" height="44" style="fill:#93c5fd"/><rect class="bx" x="130" y="128" width="100" height="6" style="fill:#fde68a"/><rect class="bx" x="130" y="92" width="100" height="36" style="fill:#fdba74"/><path class="be" d="M100 146H262" marker-end="url(#ah)"/><path class="rd" d="M110 178C140 214 220 214 250 178" marker-end="url(#ahr)" style="stroke-dasharray:4 3"/><path class="ln" d="M180 60V90" marker-end="url(#ah)"/><text x="190" y="64">閘極電壓從上方一面控制</text><text x="64" y="166">源極</text><text x="246" y="166">汲極</text><text x="152" y="114">閘極</text><text x="236" y="126" style="fill:var(--muted)">閘極氧化層</text><text x="168" y="166" style="fill:#b97a00">通道</text><text x="96" y="238" style="fill:#e5484d">深處的漏電路徑，閘極管不到</text><text x="26" y="212" style="fill:var(--muted)">p 型基板</text></svg>',
+ fin:'<svg viewBox="0 0 360 230"><rect class="bx" x="20" y="196" width="320" height="26" style="fill:#d7dce8"/><rect class="bx" x="36" y="56" width="288" height="140" style="fill:#fdba74"/><rect class="bx" x="64" y="76" width="36" height="120" style="fill:#fde68a"/><rect class="bx" x="162" y="76" width="36" height="120" style="fill:#fde68a"/><rect class="bx" x="260" y="76" width="36" height="120" style="fill:#fde68a"/><rect class="bx" x="70" y="84" width="24" height="112" style="fill:#93c5fd"/><rect class="bx" x="168" y="84" width="24" height="112" style="fill:#93c5fd"/><rect class="bx" x="266" y="84" width="24" height="112" style="fill:#93c5fd"/><text x="40" y="44">閘極包住鰭片的三面（上、左、右）</text><text x="38" y="116" style="fill:#9a5a00">閘極</text><text x="108" y="142">鰭片</text><text x="108" y="156" style="fill:var(--muted)">（通道）</text><text x="150" y="214" style="fill:var(--muted)">橫切面：電流垂直穿出畫面</text><text x="26" y="214" style="fill:var(--muted)">基板與絕緣層</text></svg>',
+ gaa:'<svg viewBox="0 0 360 230"><rect class="bx" x="80" y="20" width="200" height="190" style="fill:#fdba74"/><rect class="bx" x="100" y="46" width="160" height="34" style="fill:#fde68a"/><rect class="bx" x="100" y="100" width="160" height="34" style="fill:#fde68a"/><rect class="bx" x="100" y="154" width="160" height="34" style="fill:#fde68a"/><rect class="bx" x="108" y="54" width="144" height="18" style="fill:#93c5fd"/><rect class="bx" x="108" y="108" width="144" height="18" style="fill:#93c5fd"/><rect class="bx" x="108" y="162" width="144" height="18" style="fill:#93c5fd"/><text x="286" y="68">奈米片</text><text x="286" y="82" style="fill:var(--muted)">（通道）</text><text x="286" y="122">垂直堆疊</text><text x="286" y="136" style="fill:var(--muted)">多片並聯</text><text x="12" y="116" style="fill:#9a5a00">閘極</text><text x="12" y="130" style="fill:#9a5a00">四面包覆</text><text x="86" y="38" style="fill:var(--muted)">橫切面：電流垂直穿出畫面</text></svg>',
+ tcad:'<svg viewBox="0 0 430 270"><rect class="bx" x="8" y="14" width="124" height="62" style="fill:#fde68a"/><text x="20" y="36">製程模擬</text><text x="20" y="52" style="fill:var(--muted)">佈植・擴散・氧化</text><text x="20" y="66" style="fill:var(--muted)">蝕刻・沉積</text><rect class="bx" x="156" y="14" width="106" height="62" style="fill:#bae6fd"/><text x="168" y="36">元件結構</text><text x="168" y="52" style="fill:var(--muted)">形狀、摻雜、網格</text><rect class="bx" x="286" y="14" width="136" height="62" style="fill:#fecaca"/><text x="298" y="36">元件模擬</text><text x="298" y="52" style="fill:var(--muted)">Poisson 方程式</text><text x="298" y="66" style="fill:var(--muted)">電流連續方程式</text><path class="be" d="M132 45H154M262 45H284" marker-end="url(#ah)"/><path class="be" d="M354 78V104" marker-end="url(#ah)"/><rect class="bx" x="286" y="106" width="136" height="40" style="fill:#bbf7d0"/><text x="298" y="124">I-V、C-V</text><text x="298" y="138" style="fill:var(--muted)">電場、電流分布</text><text x="8" y="112" style="fill:var(--muted)">連續介質模型：快，可以掃很多結構</text><text x="8" y="164">精度階梯（由細到粗，由慢到快）</text><rect class="bx" x="8" y="190" width="124" height="58"/><text x="18" y="212">第一原理／NEGF</text><text x="18" y="228" style="fill:var(--muted)">原子尺度、量子輸運</text><rect class="bx" x="156" y="190" width="106" height="58" style="fill:#fecaca"/><text x="168" y="212">TCAD</text><text x="168" y="228" style="fill:var(--muted)">連續介質</text><rect class="bx" x="286" y="190" width="136" height="58"/><text x="298" y="212">緊湊模型／SPICE</text><text x="298" y="228" style="fill:var(--muted)">電路設計用</text><path class="be" d="M132 219H154M262 219H284" marker-end="url(#ah)"/><text x="134" y="184" style="font-size:10px">校準參數</text><text x="264" y="184" style="font-size:10px">擷取參數</text></svg>'
+};
+var BASICS=[
+ {id:'planar',name:'平面 MOSFET',sub:'閘極在一面',svg:'planar',
+  kw:['源極／汲極／閘極','通道','閾值電壓','短通道效應','DIBL','漏電流'],
+  what:'MOSFET 是用閘極電壓控制電流的開關。閘極加電壓，在閘極下方的矽表面形成導電通道，電流就能從源極流到汲極；電壓拿掉，通道消失，電流就關斷。閘極像水龍頭。',
+  why:'通道縮短以後，汲極的電壓開始影響通道（稱為 DIBL），閘極又只從上面一面管，深處的電流關不乾淨，待機漏電上升。這些統稱短通道效應。要繼續縮小，就得讓閘極包住更多面。',
+  me:'PN 接面、能帶彎曲、載子濃度與反轉層，這些是我的固態物理基礎，可以從能帶圖講起。'},
+ {id:'fin',name:'FinFET',sub:'閘極包三面',svg:'fin',
+  kw:['鰭片 fin','三面閘極','靜電控制','驅動電流','鰭片數量'],
+  what:'把通道從平面立起來變成一片薄薄的鰭片，閘極像馬鞍一樣跨過去，包住上、左、右三面。通道被三面同時控制，漏電更小，同樣的投影面積又能通過更多電流。',
+  why:'FinFET 在 2010 年代初期開始量產，讓製程又往下走了好幾代。限制是電流大小要用鰭片的數量調整，只能是整數倍；鰭片再縮小，高而窄的結構也越來越難做。',
+  me:'載子被限制在窄鰭片裡，量子侷限讓能階變成離散，能帶結構會改變。能帶計算是我熟悉的工具。'},
+ {id:'gaa',name:'GAA 奈米片',sub:'閘極包四面',svg:'gaa',
+  kw:['Gate-All-Around','奈米片 nanosheet','四面閘極','堆疊通道','量子侷限'],
+  what:'把通道做成水平堆疊的幾片薄片，閘極從四面把每一片完全包起來，對通道的控制最強。片的寬度可以調，能在驅動電流與面積之間更彈性地取捨。TSMC 公開表示 N2 世代採用奈米片電晶體。',
+  why:'挑戰在製程：要磊晶長出多層交替的薄膜，再把其中一種選擇性移除，讓閘極材料填進很窄的縫隙裡，還要處理內側的間隔層。每一步的公差都極小。',
+  me:'片厚只有幾 nm，量子侷限很明顯，能帶與有效質量要重新算。這正好是我做能帶計算可以貢獻的地方。'},
+ {id:'tcad',name:'TCAD 總覽',sub:'用模擬設計元件',svg:'tcad',
+  kw:['製程模擬','元件模擬','Poisson 方程式','漂移擴散','校準','近似層級'],
+  what:'TCAD 是用電腦模擬製程怎麼做出結構（佈植、擴散、氧化、蝕刻、沉積），再模擬這個結構的電晶體怎麼導電，輸出 I-V、C-V，以及內部的電場和電流分布。',
+  why:'做一次晶圓要好幾個月，也很貴，所以先用模擬篩選結構和參數，也能看到實驗看不到的內部分布。TCAD 用連續介質模型，快，但原子尺度與量子效應要靠更底層的計算（如 NEGF）提供參數，再往上餵給電路用的緊湊模型。',
+  eq:['Poisson 方程式：電位與電荷分布的關係','連續方程式加漂移擴散：電子與電洞怎麼流動'],
+  me:'要選用哪一層的近似、再用實驗去校準，這和我比較 DFT、DFT+U、DMFT 的做法是同一種思考。能帶與有效質量可以當上層模型的輸入。缺口是載子散射、半古典輸運與 TCAD 軟體的實作。'}
+,
+ {id:'b1',name:'TCAD：元件與輸運（參考 TSMC）',sub:'能帶、量子輸運',svg:'b1',
+  kw:['能帶','有效質量','NEGF','載子散射','半古典輸運','量子侷限'],
+  eq:['Landauer 圖像：電流 = 透射函數 × 兩電極費米分布之差，再對能量積分'],
+  what:'奈米尺度的元件裡，載子被限制在幾 nm 的空間，不能只靠連續介質模型。這類工作先用第一原理或經驗方法算能帶，再用量子輸運（如 NEGF）算電流，把結果拿去校準連續 TCAD 的模型參數。',
+  why:'通道只剩幾 nm、障壁很薄時，量子侷限與穿隧變得重要，有效質量、遷移率這些參數不能直接套用，還要處理載子散射（聲子、雜質、表面粗糙）。這一層算得越準，上層的 TCAD 才越可信。',
+  me:'能帶與有效質量是我最熟的部分。NEGF 的格林函數形式和我用的多體方法相近，但我做的是平衡態，沒有實作過非平衡。載子散射與半古典輸運是要補的缺口。'},
+ {id:'b2',name:'TCAD 設備腔體（參考 TSMC）',sub:'流場、熱、電漿',svg:'b2',
+  kw:['CFD','熱傳','電漿','電磁場','多物理耦合','均勻性'],
+  what:'另一條線是模擬設備腔體：用多物理模型看氣流、溫度、電漿與電磁場，找出讓製程更均勻、更穩定的設備設計和參數。',
+  why:'薄膜厚度、蝕刻速率這些製程結果取決於腔體內的分布。實驗只能量到幾個點，模擬能看整個腔體，也能在新設備導入或優化時先篩選方案。',
+  me:'非線性偏微分方程的數值方法與高效能計算，是我碩論與計算工作的共通點，可以接上。CFD、電漿模擬軟體與設備實務是大缺口，需要學。'}
+];
+/* ---------- B and C: icons ---------- */
+ICONS.proc=function(R){R(2,18,28,10,'#94a3b8');R(2,13,11,5,'#78350f');R(19,13,11,5,'#78350f');for(var i=0;i<3;i++){R(14+i*2,2,1,8,'#38bdf8');R(13+i*2,9,3,1,'#38bdf8')}R(14,20,2,2,'#facc15');R(17,21,2,2,'#facc15');R(15,24,2,2,'#facc15');R(18,24,2,2,'#facc15')};
+ICONS.dev=function(R){R(3,20,26,10,'#94a3b8');R(5,18,7,6,'#60a5fa');R(20,18,7,6,'#60a5fa');R(11,16,10,2,'#fde68a');R(11,8,10,8,'#fdba74');for(var x=3;x<29;x+=4)R(x,20,1,10,'#475569');R(3,24,26,1,'#475569');R(3,27,26,1,'#475569')};
+ICONS.band=function(R){R(2,2,1,28,'#475569');R(2,29,28,1,'#475569');for(var i=-9;i<=9;i++){R(16+i,4+Math.round(i*i/7),1,2,'#38bdf8');R(16+i,26-Math.round(i*i/7),1,2,'#f97316')}R(16,12,1,8,'#facc15');R(15,12,3,1,'#facc15');R(15,19,3,1,'#facc15')};
+ICONS.negf=function(R){R(1,10,8,14,'#64748b');R(23,10,8,14,'#64748b');R(12,6,8,22,'#fecaca');R(9,14,3,2,'#facc15');R(9,19,3,2,'#facc15');R(20,14,3,2,'#facc15');R(20,19,3,2,'#facc15');R(13,12,6,1,'#ef4444');R(13,22,6,1,'#ef4444')};
+ICONS.chamber=function(R){R(3,3,26,26,'#64748b');R(5,5,22,22,'#e2e8f0');R(8,6,16,3,'#475569');for(var i=0;i<3;i++){R(11+i*5,10,1,6,'#38bdf8');R(10+i*5,15,3,1,'#38bdf8')}R(8,20,16,2,'#334155');R(8,22,16,4,'#fb923c')};
+ICONS.plasma=function(R,x){R(5,3,22,3,'#64748b');R(5,26,22,3,'#64748b');x.fillStyle='#c084fc';for(var j=7;j<25;j++)for(var i=5;i<28;i++){var u=(i+.5-16)/11,v=(j+.5-16)/9;if(u*u+v*v<=1)x.fillRect(i,j,1,1)}for(var k=0;k<3;k++){R(11+k*5,16,1,8,'#ef4444');R(10+k*5,23,3,1,'#ef4444')}R(14,10,2,2,'#fff');R(20,12,2,2,'#fff')};
+ICONS.talk=function(R){R(2,4,17,11,'#93c5fd');R(4,15,3,3,'#93c5fd');R(5,7,10,1,'#1e3a8a');R(5,10,7,1,'#1e3a8a');R(13,15,17,11,'#fdba74');R(25,26,3,3,'#fdba74');R(16,18,10,1,'#7c2d12');R(16,21,7,1,'#7c2d12')};
+ICONS.support=function(R){R(3,10,17,19,'#94a3b8');R(6,13,9,7,'#0ea5e9');R(6,23,5,2,'#475569');for(var i=0;i<13;i++){R(18+i,5+i,2,2,'#facc15')}R(25,17,5,3,'#facc15');R(23,3,6,4,'#facc15')};
+ICONS.appdev=function(R){R(12,2,8,2,'#64748b');R(13,4,6,7,'#e2e8f0');for(var i=0;i<14;i++){R(13-i,11+i,6+2*i,1,i>7?'#4ade80':'#e2e8f0')}R(1,26,30,3,'#475569')};
+
+/* ---------- B and C: illustrations ---------- */
+SVG.proc='<svg viewBox="0 0 360 230"><rect class="bx" x="14" y="130" width="150" height="70" style="fill:#d7dce8"/><rect class="bx" x="14" y="106" width="52" height="24" style="fill:#d6a77a"/><rect class="bx" x="112" y="106" width="52" height="24" style="fill:#d6a77a"/><path class="be" d="M80 40V100M89 40V100M98 40V100" marker-end="url(#ah)"/><text x="52" y="30">離子佈植</text><text x="68" y="96" style="font-size:10px">遮罩</text><circle cx="84" cy="146" r="3" fill="#e6a400"/><circle cx="92" cy="152" r="3" fill="#e6a400"/><circle cx="88" cy="160" r="3" fill="#e6a400"/><circle cx="80" cy="154" r="3" fill="#e6a400"/><text x="16" y="216" style="fill:var(--muted)">矽基板</text><path class="ln" d="M200 190H350M200 190V50" marker-end="url(#ah)"/><path d="M204 188C230 186 244 70 262 68S292 160 346 188" class="ln" style="stroke:#e6a400;stroke-width:2.4"/><path d="M204 188C236 186 260 110 290 112S330 170 346 188" class="ln" style="stroke:#e5484d;stroke-dasharray:5 3;stroke-width:2.4"/><text x="208" y="44">濃度</text><text x="312" y="206">深度</text><text x="224" y="64" style="fill:#b97a00">佈植後：集中在某一深度</text><text x="262" y="132" style="fill:#e5484d">高溫擴散後：變寬變淺</text></svg>';
+SVG.dev='<svg viewBox="0 0 360 230"><rect class="bx" x="14" y="120" width="170" height="70" style="fill:#d7dce8"/><rect class="bx" x="24" y="104" width="46" height="34" style="fill:#93c5fd"/><rect class="bx" x="128" y="104" width="46" height="34" style="fill:#93c5fd"/><rect class="bx" x="70" y="100" width="58" height="5" style="fill:#fde68a"/><rect class="bx" x="70" y="72" width="58" height="28" style="fill:#fdba74"/><path class="ln" d="M14 134H184M14 150H184M14 170H184M14 188H184M44 120V190M70 120V190M84 120V190M99 120V190M114 120V190M128 120V190M154 120V190" style="stroke-width:.8;opacity:.6"/><text x="22" y="64">網格：通道附近切得最細</text><path d="M214 190H350M214 190V40" class="ln" marker-end="url(#ah)"/><path d="M216 184C250 182 262 176 276 150S300 80 340 60" class="ln" style="stroke:#22a06b;stroke-width:2.4"/><text x="218" y="34">電流 Id</text><text x="296" y="206">閘極電壓 Vg</text><text x="222" y="170" style="fill:var(--muted)">次臨界區：電流隨電壓指數上升</text><text x="236" y="212" style="fill:var(--muted)">斜率越陡，開關越乾淨</text></svg>';
+SVG.band='<svg viewBox="0 0 360 240"><path d="M60 210V30M60 210H330" class="ln" marker-end="url(#ah)"/><text x="68" y="30">能量 E</text><text x="296" y="226">動量 k</text><path d="M100 50Q195 150 290 50" class="ln" style="stroke:#38bdf8;stroke-width:2.6"/><path d="M100 200Q195 100 290 200" class="ln" style="stroke:#f97316;stroke-width:2.6"/><text x="108" y="44" style="fill:#0284c7">導帶</text><text x="108" y="214" style="fill:#c2410c">價帶</text><path class="ln" d="M195 100V150" style="stroke:#6d28d9" marker-end="url(#ah)"/><text x="204" y="128">能隙 Eg</text><text x="214" y="64" style="fill:var(--muted)">曲率大 → 有效質量小</text><text x="214" y="78" style="fill:var(--muted)">載子好推、遷移率高</text><text x="70" y="236" style="fill:var(--muted)">m* = ħ² ÷ (∂²E/∂k²)</text></svg>';
+SVG.negf='<svg viewBox="0 0 360 240"><rect class="bx" x="14" y="100" width="70" height="70" style="fill:#cbd5e1"/><rect class="bx" x="276" y="100" width="70" height="70" style="fill:#cbd5e1"/><text x="28" y="94">源極電極</text><text x="288" y="94">汲極電極</text><path d="M84 160H120Q180 70 240 160H276" class="ln" style="stroke:#e5484d;stroke-width:2.2"/><text x="148" y="70" style="fill:#e5484d">能量障壁（通道）</text><path d="M14 126H84M276 142H346" class="gy"/><text x="20" y="120" style="font-size:10px">源極費米能階</text><text x="280" y="136" style="font-size:10px">汲極費米能階</text><path class="be" d="M84 122C94 108 102 136 112 122S128 108 136 122" marker-end="url(#ah)"/><path class="be" d="M150 148H210" style="stroke-dasharray:4 3" marker-end="url(#ah)"/><text x="130" y="168" style="fill:#b97a00">穿隧：障壁薄時電子穿過去</text><text x="14" y="206" style="fill:var(--muted)">把元件看成兩個電極中間的散射區：</text><text x="14" y="222" style="fill:var(--muted)">電流 ∝ 透射機率 T(E) × 兩電極填滿程度的差，再對能量積分</text></svg>';
+SVG.chamber='<svg viewBox="0 0 360 262"><rect class="bx" x="40" y="14" width="280" height="196" style="fill:none"/><rect class="bx" x="100" y="28" width="160" height="12" style="fill:#cbd5e1"/><path class="be" d="M130 44V110M180 44V110M230 44V110" marker-end="url(#ah)"/><rect class="bx" x="100" y="140" width="160" height="6" style="fill:#475569"/><rect class="bx" x="90" y="146" width="180" height="22" style="fill:#fdba74"/><path class="gy" d="M130 114C120 130 70 150 62 190M230 114C240 130 290 150 298 190"/><path class="rd" d="M62 186V204M298 186V204" marker-end="url(#ahr)"/><text x="40" y="10">噴淋頭：氣體從這裡均勻送出</text><text x="62" y="136" style="font-size:10px">晶圓</text><text x="150" y="162">加熱盤</text><text x="44" y="226" style="fill:#e5484d">排氣口</text><text x="268" y="226" style="fill:#e5484d">排氣口</text><text x="40" y="246" style="fill:var(--muted)">氣流往外散，邊緣的濃度與溫度和中心不同，薄膜厚度就不均勻</text></svg>';
+SVG.plasma='<svg viewBox="0 0 360 256"><rect class="bx" x="70" y="18" width="220" height="14" style="fill:#cbd5e1"/><text x="76" y="12">射頻電極（RF）</text><ellipse cx="180" cy="100" rx="95" ry="46" style="fill:#e9d5ff;stroke:#a855f7;stroke-width:1.6;opacity:.85"/><text x="150" y="104" style="fill:#6b21a8">電漿</text><circle cx="130" cy="86" r="3" fill="#fff"/><circle cx="220" cy="120" r="3" fill="#fff"/><circle cx="168" cy="76" r="3" fill="#fff"/><path class="rd" d="M120 150V188M150 150V188M180 150V188M210 150V188M240 150V188" marker-end="url(#ahr)"/><rect class="bx" x="70" y="192" width="220" height="18" style="fill:#d7dce8"/><rect class="bx" x="100" y="188" width="30" height="4" style="fill:#fde68a"/><rect class="bx" x="150" y="188" width="30" height="4" style="fill:#fde68a"/><rect class="bx" x="200" y="188" width="30" height="4" style="fill:#fde68a"/><text x="76" y="228">晶圓與電極</text><text x="262" y="156" style="fill:#e5484d">離子</text><text x="246" y="170" style="fill:#e5484d">被鞘層電場加速</text><text x="246" y="184" style="fill:#e5484d">垂直打到晶圓</text><text x="76" y="248" style="fill:var(--muted)">鞘層：電漿與晶圓之間的電場區，離子在這裡被加速</text></svg>';
+SVG.talk='<svg viewBox="0 0 360 250"><rect class="bx" x="8" y="16" width="160" height="62" style="fill:#fde68a"/><text x="20" y="40">客戶（晶圓廠）</text><text x="20" y="56" style="fill:var(--muted)">製程、設備、良率工程師</text><rect class="bx" x="196" y="16" width="156" height="62" style="fill:#bae6fd"/><text x="208" y="40">設備商內部</text><text x="208" y="56" style="fill:var(--muted)">研發、產品、服務團隊</text><rect class="bx" x="115" y="140" width="130" height="62" style="fill:#fbcfe8"/><text x="134" y="164">AE／AS（我）</text><text x="126" y="180" style="fill:var(--muted)">翻譯問題與方案</text><path class="be" d="M60 80L125 138" marker-end="url(#ah)"/><path class="rd" d="M145 138L90 80" style="stroke-dasharray:4 3" marker-end="url(#ahr)"/><path class="be" d="M235 138L290 80" marker-end="url(#ah)"/><path class="rd" d="M310 80L255 138" style="stroke-dasharray:4 3" marker-end="url(#ahr)"/><text x="8" y="226" style="font-size:10px">黃箭頭：問題、需求、資料往 AE 或研發送</text><text x="8" y="242" style="font-size:10px;fill:#e5484d">紅虛線：方案、支援、答案往回送</text></svg>';
+SVG.support='<svg viewBox="0 0 360 200"><rect class="bx" x="8" y="60" width="76" height="60" style="fill:#fde68a"/><text x="14" y="86">客戶回報</text><text x="14" y="102" style="fill:var(--muted)">結果不如預期</text><rect class="bx" x="100" y="60" width="76" height="60" style="fill:#bae6fd"/><text x="110" y="86">重現與診斷</text><text x="108" y="102" style="fill:var(--muted)">看資料找原因</text><rect class="bx" x="192" y="60" width="76" height="60" style="fill:#fbcfe8"/><text x="198" y="86">調整方案</text><text x="198" y="102" style="fill:var(--muted)">參數或配方</text><rect class="bx" x="284" y="60" width="68" height="60" style="fill:#bbf7d0"/><text x="292" y="86">驗收確認</text><text x="290" y="102" style="fill:var(--muted)">達到規格</text><path class="be" d="M84 90H98M176 90H190M268 90H282" marker-end="url(#ah)"/><path class="rd" d="M230 124C230 170 140 170 140 124" style="stroke-dasharray:4 3" marker-end="url(#ahr)"/><text x="150" y="182" style="fill:#e5484d">沒達標就回到診斷再調整</text></svg>';
+SVG.appdev='<svg viewBox="0 0 360 230"><rect class="bx" x="20" y="20" width="110" height="46" style="fill:#fde68a"/><text x="34" y="48">客戶需求</text><rect class="bx" x="230" y="20" width="110" height="46" style="fill:#bae6fd"/><text x="244" y="48">設計實驗</text><rect class="bx" x="230" y="160" width="110" height="46" style="fill:#fbcfe8"/><text x="244" y="188">量測與分析</text><rect class="bx" x="20" y="160" width="110" height="46" style="fill:#bbf7d0"/><text x="30" y="188">方法與文件</text><path class="be" d="M132 43H228M285 68V158M228 183H132M75 158V68" marker-end="url(#ah)"/><text x="104" y="118" style="fill:var(--muted)">假設 → 實驗 → 分析 → 驗證</text><text x="104" y="134" style="fill:var(--muted)">和做研究的迴圈是同一件事</text></svg>';
+
+BSVG.b1=SVG.band;BSVG.b2=SVG.chamber;
+
+/* ---------- B and C: roles and tools ---------- */
+var TOOLS_B=[
+ {k:'band',grp:'元件與輸運',name:'能帶與有效質量',kw:['第一原理','能隙','有效質量'],
+  how:'用 DFT 等方法算材料的能帶，從中擷取能隙、有效質量，提供給上層的 TCAD 模型當輸入。',
+  phys:'載子的有效質量由能帶曲率決定，曲率大，有效質量小，載子容易被電場推動，遷移率高。薄片或窄鰭片裡有量子侷限，能階會變成離散，等效能隙與有效質量也跟著變。',
+  sig:'看能隙大小、導帶谷的位置與曲率。',
+  me:'這是我最直接的專業。我也知道 DFT 對能隙有系統性的限制，這和我比較 DFT、DFT+U、DMFT 的經驗屬於同一類問題。'},
+ {k:'negf',grp:'元件與輸運',name:'量子輸運 NEGF',kw:['非平衡格林函數','穿隧','透射函數'],
+  how:'在奈米尺度元件中算量子輸運，用來決定或驗證連續 TCAD 的模型參數。',
+  phys:'把元件看成兩個電極之間的散射區。電流由透射函數 T(E) 與兩電極的費米分布差對能量積分得到（Landauer 圖像）。障壁很薄時，穿隧不能忽略。',
+  sig:'看 T(E) 的形狀、位置，以及電流隨偏壓的變化。',
+  me:'格林函數的形式和我熟悉的多體方法相近，但我做的是平衡態，NEGF 是非平衡，我沒有實作過。這是要補的缺口。'},
+ {k:'proc',grp:'兩者共用',name:'製程模擬',kw:['離子佈植','擴散','摻雜分布'],
+  how:'輸入製程步驟，依序算出每一步之後的結構與摻雜分布，產生可以交給元件模擬的結構。',
+  phys:'離子佈植讓雜質集中在某個深度，近似高斯分布；高溫退火時，雜質依擴散方程式往外擴散，分布變寬變淺。氧化、蝕刻、沉積則改變形狀。',
+  sig:'看摻雜剖面的深度與寬度，是否符合設計目標。',
+  me:'擴散方程式的數值解，和我碩論的偏微分方程數值方法直接相關。製程步驟的實務是我要補的。'},
+ {k:'dev',grp:'元件與輸運',name:'元件模擬',kw:['Poisson','漂移擴散','I-V'],
+  how:'在結構的網格上解 Poisson 方程式與載子的連續方程式，算出 I-V、C-V 與內部的電場、電流分布。',
+  phys:'電位與電荷的關係由 Poisson 方程式給出，載子的流動用漂移加擴散描述。網格要在通道附近切細，否則結果會不準或不收斂。',
+  sig:'看閾值電壓、次臨界斜率、漏電與 DIBL。',
+  me:'偏微分方程的離散、網格與收斂，是我碩論的核心。元件特性的細節與軟體操作要補。'},
+ {k:'chamber',grp:'設備腔體',name:'腔體流場與熱',kw:['CFD','熱傳','溫度均勻性'],
+  how:'模擬設備腔體裡氣體怎麼流、晶圓怎麼被加熱，找出讓薄膜或蝕刻更均勻的設計與參數。',
+  phys:'氣體流動遵守 Navier–Stokes 方程，熱透過傳導、對流與輻射傳遞。溫度與氣體濃度的分布決定沉積速率，分布不均，薄膜厚度就不均勻。',
+  sig:'看晶圓表面的溫度與濃度分布圖。',
+  me:'方法上和我做的非線性偏微分方程數值與高效能計算相近。CFD 軟體與腔體實務我沒有，是大缺口。'},
+ {k:'plasma',grp:'設備腔體',name:'電漿與電磁',kw:['電漿','鞘層','射頻電磁場'],
+  how:'模擬電漿蝕刻與沉積腔體裡的電場、離子與自由基，預測蝕刻速率與形貌。',
+  phys:'射頻電場把氣體游離成電漿。晶圓附近的鞘層電場加速離子垂直打到表面，所以能蝕出垂直的側壁；中性的自由基負責化學反應。電磁波在腔體內的分布會影響電漿的均勻性。',
+  sig:'看離子通量與能量分布，以及均勻性。',
+  me:'電漿與電磁場的基礎物理我學過，數值方法可以接上。專用的電漿模擬軟體與製程知識要學。'}
+];
+var TOOLS_C=[
+ {k:'talk',name:'客戶介面',kw:['客戶','翻譯問題','跨團隊'],
+  how:'AE／AS 站在晶圓廠與自家研發、產品團隊之間，把客戶的問題整理成工程問題，再把方案帶回客戶。',
+  phys:'這一項沒有物理機制，重點是把同一件事用客戶和研發各自聽得懂的方式講清楚。',
+  sig:'客戶真正在意的是良率、產能還是規格，這決定先解哪個問題。',
+  me:'做研究時要和實驗、理論、不同背景的人溝通。客戶端的實務經驗我沒有。'},
+ {k:'support',name:'現場支援與驗收',kw:['重現問題','參數調整','機台驗收'],
+  how:'客戶回報結果不如預期時，重現問題、看資料找原因、調整參數或方案，最後確認達到驗收規格。',
+  phys:'要理解機台的物理原理，才知道哪些參數會影響結果，不能只靠試錯。',
+  sig:'看調整前後的資料，是否達到規格。',
+  me:'我在同步輻射光束線做過 ARPES 與 XAS 實驗，熟悉儀器使用、校正和排除問題的流程。晶圓廠機台我沒有操作過。'},
+ {k:'appdev',name:'應用開發',kw:['新應用','實驗設計','方法開發'],
+  how:'針對客戶的新需求，設計實驗、量測、分析資料，把有效的做法整理成方法與文件。Scientist 的角色在這一塊更偏研究。',
+  phys:'依儀器與應用而定，核心是把物理原理轉成可重複的量測方法。',
+  sig:'看方法是否可重複、靈敏度夠不夠。',
+  me:'假設、實驗、分析、驗證，這個迴圈就是我做研究的日常。'},
+ {k:'sem',name:'檢測與量測原理',kw:['SEM','光學檢測','量測方法'],
+  how:'檢測與量測設備商的 AE／AS 要能解釋儀器怎麼量、能量到什麼程度，並和客戶一起設定量測條件。',
+  phys:'電子束與光學方法的原理，和 ATYED 那一區介紹的 SEM、明場、暗場是同一組。',
+  sig:'訊號的來源與限制。',
+  me:'原理可以講，沒有操作過這些機台。'},
+ {k:'map',name:'資料分析與報告',kw:['資料整理','統計','報告'],
+  how:'把量測資料整理成客戶看得懂的圖與結論，指出問題在哪、建議怎麼改。',
+  phys:'和 ATYED 的晶圓圖分析是同一類工作，只是對象是客戶與自家團隊。',
+  sig:'重點是結論要有資料支撐，也要說明不確定性。',
+  me:'寫分析腳本、畫圖、寫成報告，是我的日常。'}
+];
+/* ====================== core helpers ====================== */
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function ul(a){return '<ul>'+a.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'}
+function $(id){return document.getElementById(id)}
+function reduced(){try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
+
+/* ====================== modal ====================== */
+var ov=$('ov'),dbody=$('dbody'),dbar=$('dbar'),lastFocus=null;
+function show(html,colorVar,from){
+  lastFocus=from||document.activeElement;
+  dbody.innerHTML=html;dbar.style.setProperty('--c','var('+(colorVar||'--accent')+')');
+  $('dlg').style.setProperty('--c','var('+(colorVar||'--accent')+')');
+  ov.hidden=false;$('dx').focus();
+}
+function closeM(){ov.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$('dx').addEventListener('click',closeM);
+ov.addEventListener('click',function(e){if(e.target===ov)closeM()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM()});
+
+/* ====================== sprites (10x14 role characters) ====================== */
+function P(){var a=arguments,s='';for(var i=0;i<a.length;i+=2)s+=new Array(a[i+1]+1).join(a[i]);return s}
+var BASE=[P('.',3,'t',4,'.',3),P('.',2,'t',6,'.',2),P('.',2,'s',6,'.',2),P('.',2,'s',1,'d',1,'s',2,'d',1,'s',1,'.',2),P('.',2,'s',6,'.',2),P('.',3,'s',4,'.',3),
+ P('.',1,'c',8,'.',1),P('s',1,'c',8,'s',1),P('s',1,'c',8,'s',1),P('.',1,'c',8,'.',1),P('.',1,'c',8,'.',1),P('.',2,'p',2,'.',2,'p',2,'.',2),P('.',2,'p',2,'.',2,'p',2,'.',2),P('.',1,'d',2,'.',4,'d',2,'.',1)];
+var VAR={
+ pe:{1:P('.',1,'t',8,'.',1),2:P('.',2,'g',6,'.',2),3:P('.',2,'g',1,'d',1,'g',2,'d',1,'g',1,'.',2)},
+ mfg:{1:P('.',1,'t',8,'.',1)},
+ ee:{0:P('.',2,'t',6,'.',2),1:P('.',1,'t',8,'.',1)},
+ lit:{0:P('.',2,'t',6,'.',2),1:P('.',1,'t',8,'.',1),2:P('.',1,'t',1,'s',6,'t',1,'.',1),3:P('.',1,'t',1,'s',1,'d',1,'s',2,'d',1,'s',1,'t',1,'.',1),4:P('.',1,'t',1,'s',6,'t',1,'.',1)},
+ fac:{0:P('.',2,'t',6,'.',2),1:P('.',1,'t',8,'.',1)},
+ yed:{3:P('.',2,'d',1,'g',2,'d',1,'g',2,'.',2)},
+ tst:{0:P('.',2,'t',6,'.',2),3:P('.',2,'g',1,'d',1,'g',2,'d',1,'g',1,'.',2)},
+ cse:{2:P('.',1,'t',1,'s',6,'t',1,'.',1),3:P('.',1,'t',1,'s',1,'d',1,'s',2,'d',1,'s',1,'t',1,'.',1),4:P('.',1,'t',1,'s',6,'t',1,'.',1),5:P('.',2,'t',1,'s',1,'x',2,'.',4)},
+ dtco:{2:P('.',1,'t',1,'s',6,'t',1,'.',1),4:P('.',1,'t',1,'s',6,'t',1,'.',1)},
+ tcad:{0:P('.',2,'t',6,'.',2),1:P('.',1,'t',8,'.',1),2:P('.',1,'t',1,'s',6,'t',1,'.',1),3:P('.',1,'t',1,'s',1,'d',1,'s',2,'d',1,'s',1,'t',1,'.',1),4:P('.',1,'t',1,'s',6,'t',1,'.',1),5:P('.',1,'t',1,'.',1,'s',4,'.',1,'t',1,'.',1),6:P('t',1,'c',8,'t',1),7:P('t',1,'c',8,'t',1),8:P('t',1,'c',8,'t',1)},
+ ma:{0:P('.',2,'t',6,'.',2),1:P('.',1,'t',8,'.',1),7:P('s',1,'c',8,'g',1)},
+ ap:{0:P('.',2,'t',6,'.',2),1:P('.',1,'t',8,'.',1)},
+ rp:{0:P('.',1,'t',8,'.',1),1:P('t',10)},
+ ae:{0:P('.',2,'t',6,'.',2),8:P('s',1,'c',3,'w',2,'c',3,'s',1),7:P('s',1,'c',3,'w',2,'c',3,'s',1)},
+ pie:{},xfer:{},loop:{}
+};
+var HAT={pe:'#2b2b3a',mfg:'#d97706',ee:'#facc15',lit:'#fde68a',fac:'#f97316',yed:'#3b2a20',tst:'#164e63',cse:'#4a044e',pie:'#4b3b1a',xfer:'#6b2147',loop:'#0c4a6e',dtco:'#1e1b4b',tcad:'#3f6212',ma:'#451a03',ap:'#134e4a',rp:'#0f172a',ae:'#5b21b6'};
+function sprite(cv,k,color){
+  var rows=BASE.slice(),v=VAR[k]||{};Object.keys(v).forEach(function(i){rows[i]=v[i]});
+  var pal={s:'#f2c9a5',d:'#1d1d2b',c:color,p:'#2a3350',t:HAT[k]||'#333',g:'#9be7ff',w:'#f4f6fb',x:'#1d1d2b'};
+  var x=cv.getContext('2d');x.clearRect(0,0,10,14);
+  rows.forEach(function(r,y){for(var i=0;i<10;i++){var ch=r[i];if(ch&&ch!=='.'){x.fillStyle=pal[ch]||'#000';x.fillRect(i,y,1,1)}}});
+}
+
+/* ====================== roles ====================== */
+var ROLES={
+ pe:{c:'--pe',tag:'PE',nm:'製程工程師',fab:'負責量產線上某一段製程（薄膜、蝕刻、擴散等）的參數穩定，處理異常批次，顧好良率與重複性。',rd:'製程模組研發：從零定義新製程的配方與製程視窗，決定「這個結構要怎麼做出來」。',link:'研發先定義，產線再複製。'},
+ mfg:{c:'--mfg',tag:'MFG',nm:'製造',fab:'排程、派工、WIP（在製品）管理，讓量產線順暢運轉。',rd:'研發製程中心（RDPC）的製造端，安排試產線與實驗批次的運轉。',link:'研發的實驗批次小而零碎，排程與追蹤的紀律決定數據多快拿到。'},
+ ee:{c:'--ee',tag:'EE',nm:'設備工程師',fab:'機台維護、稼動率、異常排除，讓機台穩定。',rd:'新機台導入與驗證，與設備商合作，讓新設備能用在新製程。',link:'設備商的 Application Engineer 會在這裡與設備工程師合作。'},
+ lit:{c:'--lit',tag:'LITHO',nm:'黃光',fab:'曝光與對準，控制線寬（CD）與疊對（overlay）。',rd:'微影模組研發：評估新的光阻、光罩與圖形方案。',link:'兩邊都在處理「更小的圖形要怎麼印出來」。'},
+ fac:{c:'--fac',tag:'FAC',nm:'廠務',fab:'無塵室、氣體、化學品、純水與電力，是整座廠的基礎。',rd:'研發廠區同樣由廠務支撐，新製程常帶來新的氣體或化學品需求。',link:'看不見但不能停的一環，新製程要提早與他們對齊。'},
+ yed:{c:'--yed',tag:'YED',nm:'良率提升',fab:'分析缺陷與晶圓圖（wafer map），追查良率損失來自哪一站，回報給製程。',rd:'ATYED：先進製程階段的良率提升，負責缺陷的根因分析，以及偵測方法的開發。',link:'同一個顏色：兩邊都是從資料裡找出「問題在哪、為什麼」。',target:true,ex:'tools'},
+ tst:{c:'--tst',tag:'TEST',nm:'封裝與測試',fab:'封裝把晶片包起來並接出引腳；測試確認功能與規格。',rd:'先進封裝研發與測試方法開發（見右邊的先進封裝）。',link:'晶圓做完之後的最後一關。'},
+ cse:{c:'--cse',tag:'CS',nm:'客戶服務',fab:'回應客戶的問題、訂單與出貨。',rd:'客戶的需求會透過業務、設計技術等單位帶回研發。',link:'面對客戶的窗口。晶圓代工廠對應 Application Engineer 的功能，分散在這類單位。'},
+ pie:{c:'--pie',tag:'PIE',nm:'整合',body:'整合工程師串起所有模組，確認整條流程做出來的元件符合規格。各模組的問題最後會匯到這裡。'},
+ xfer:{c:'--tt',tag:'XFER',nm:'技術移轉',body:'研發把定好的製程交給量產廠，重點是讓不同廠區做出同樣的結果。'},
+ loop:{c:'--fb',tag:'LOOP',nm:'良率回饋',body:'量產的缺陷與良率資料回傳給研發，下一代製程才會更好。YED 與 ATYED 在這一環。'},
+ dtco:{c:'--dtco',tag:'DT',nm:'設計技術',body:'TSMC 官網描述這個單位連結客戶與製程開發，讓客戶更容易採用 TSMC 的製程技術。一般業界的做法包括設計規則與元件模型。'},
+ tcad:{c:'--tcad',tag:'TCAD',nm:'模擬 TCAD',fab:null,rd:'用電腦模擬製程與元件，在做出晶圓之前先預測結構與電性，幫研發篩選方案。分成「元件與輸運」與「設備腔體」兩條線。',link:'它不在產線上，服務研發：先模擬，再用實驗校準。',target:true,ex:'tcad'},
+ ma:{c:'--ma',tag:'MA/FA',nm:'材料與失效分析',fab:'量產線遇到異常時也會送樣分析，用同樣的手段找原因。',rd:'用電子顯微鏡等方法看晶片內部的結構與失效位置，給研發與良率團隊證據。',link:'看得見的證據，良率提升很依賴它。'},
+ ap:{c:'--ap',tag:'ADV PKG',nm:'先進封裝',fab:'由封裝產線量產。',rd:'開發把多顆晶片堆疊或並排封裝在一起的技術。',link:'晶片越來越大、越來越貴，封裝成為提高效能的另一條路。'},
+ ae:{c:'--ae',tag:'AE',nm:'設備商 AE',body:'Application Engineer（應用工程師）通常在設備、材料或量測公司，是公司外部的人。站在客戶（晶圓廠）與自家研發之間，在機台導入、製程開發和驗收時支援客戶。晶圓廠這邊對應的窗口是設備 EE。'},
+ rp:{c:'--rp',tag:'R&P',nm:'前瞻研究',fab:null,rd:'探索未來幾代的新元件結構與新材料，還沒進入產品開發。',link:'TSMC 的研發分工包含 Research & Pathfinding。'}
+};
+function roleCanvas(cv,k){sprite(cv,k,css(ROLES[k].c))}
+function who(k,label,cls){
+  var r=ROLES[k],b=document.createElement('button');b.type='button';b.className='who'+(cls?' '+cls:'')+(r.target&&cls&&cls.indexOf('tg')>=0?' target':'');
+  b.dataset.k=k;b.style.setProperty('--c','var('+r.c+')');
+  var cv=document.createElement('canvas');cv.width=10;cv.height=14;
+  var t=document.createElement('span');t.className='tag';t.textContent=r.tag;
+  var n=document.createElement('span');n.className='nm';n.textContent=label||r.nm;
+  b.appendChild(cv);b.appendChild(t);b.appendChild(n);b._cv=cv;b._k=k;
+  b.addEventListener('click',function(){openRole(k,b)});
+  return b;
+}
+var ALLWHO=[];
+function paintWho(){ALLWHO.forEach(function(b){roleCanvas(b._cv,b._k)})}
+
+function openRole(k,from){
+  var r=ROLES[k],h;
+  if(r.body){
+    h='<h3>'+esc(r.nm)+' ('+esc(r.tag)+')</h3><p style="margin:0">'+esc(r.body)+'</p>';
+  }else{
+    h='<h3>'+esc(r.nm)+' ('+esc(r.tag)+')</h3>';
+    if(r.fab===null)h+='<div class="col" style="--c:var('+r.c+')"><h4>RD OFFICE 研發</h4><p>'+esc(r.rd)+'</p></div><p class="cap">這個角色是研發專屬，產線沒有直接對應。</p>';
+    else h+='<div class="cols"><div class="col"><h4>FAB LINE 量產</h4><p>'+esc(r.fab)+'</p></div><div class="col"><h4>RD OFFICE 研發</h4><p>'+esc(r.rd)+'</p></div></div>';
+    h+='<div class="link"><b>兩邊的共通點</b><br>'+esc(r.link)+'</div>';
+    if(r.ex==='tcad')h+='<p style="margin:12px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-b="tcad" type="button">TCAD 是什麼</button><button class="btn" data-b="b1" type="button">元件與輸運</button><button class="btn" data-b="b2" type="button">設備腔體</button></p>';
+    if(r.ex==='tools')h+='<p style="margin:12px 0 0"><button class="btn" data-b="tools" type="button">看 ATYED 的工具</button></p>';
+  }
+  show(h,r.c,from);
+  var bs=dbody.querySelectorAll('[data-b]');
+  Array.prototype.forEach.call(bs,function(b){b.addEventListener('click',function(){
+    var id=b.dataset.b;if(id==='tools'){openToolList('yed',b)}else openBasic(id,b)})});
+}
+function openToolList(){
+  closeM();setPart(2);
+  setTimeout(function(){pickRole('data');var e=$('rolePanel');e.scrollIntoView({behavior:reduced()?'auto':'smooth'})},50);
+}
+function openBasic(id,from){
+  var d=BASICS.filter(function(x){return x.id===id})[0];
+  show('<h3>'+esc(d.name)+'</h3><div class="illu">'+BSVG[d.svg]+'</div><div>'+d.kw.map(function(w){return '<span class="tag2">'+esc(w)+'</span>'}).join('')+'</div>'
+   +'<div class="sec"><h4>它是什麼</h4><p>'+esc(d.what)+'</p></div>'
+   +(d.eq?d.eq.map(function(e){return '<div class="eq">'+esc(e)+'</div>'}).join(''):'')
+   +'<div class="sec"><h4>為什麼需要，限制在哪</h4><p>'+esc(d.why)+'</p></div><p class="cap">示意圖，簡化過。</p>','--accent',from);
+}
+function openTool(t,from){
+  var il=t.k==='map'?'<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">'+['edge','scratch','cluster'].map(function(k,i){return '<div style="text-align:center">'+waferMap(k)+'<div class="cap">'+['邊緣環','刮痕線','局部群聚'][i]+'</div></div>'}).join('')+'</div>':SVG[t.k];
+  show('<h3>'+esc(t.name)+'</h3><div class="illu">'+il+'</div><p class="cap" style="margin-bottom:8px">示意圖，簡化過，不代表特定機台。</p>'
+   +'<div>'+t.kw.map(function(w){return '<span class="tag2">'+esc(w)+'</span>'}).join('')+'</div>'
+   +'<div class="sec"><h4>它在做什麼</h4><p>'+esc(t.how)+'</p></div>'
+   +'<div class="sec"><h4>物理機制</h4><p>'+esc(t.phys)+'</p></div>'
+   +'<div class="sec"><h4>怎麼讀訊號</h4><p>'+esc(t.sig)+'</p></div>','--accent',from);
+}
+function mkTools(box,list){list.forEach(function(t){
+  var b=document.createElement('button');b.type='button';b.className='tool';
+  var cv=document.createElement('canvas');cv.width=32;cv.height=32;icon(cv,ICONS[t.k]);
+  var n=document.createElement('span');n.className='nm';n.textContent=t.name;
+  var kw=document.createElement('span');kw.className='kw';kw.textContent=t.kw.join('・');
+  b.appendChild(cv);if(t.grp){var g=document.createElement('span');g.className='tag2';g.style.fontSize='11px';g.textContent=t.grp;b.appendChild(g)}b.appendChild(n);b.appendChild(kw);box.appendChild(b);
+  b.addEventListener('click',function(){openTool(t,b)});
+})}
+
+/* ====================== PART 1-1: industry matrix ====================== */
+var PIC={
+ design:function(R){R(8,8,16,16,'#475569');R(10,10,12,12,'#1e293b');R(13,13,6,6,'#38bdf8');for(var i=0;i<4;i++){R(10+i*3,4,2,4,'#facc15');R(10+i*3,24,2,4,'#facc15');R(4,10+i*3,4,2,'#facc15');R(24,10+i*3,4,2,'#facc15')}},
+ mat:function(R,x){x.fillStyle='#cbd5e1';for(var j=0;j<32;j++)for(var i=0;i<32;i++){var dx=i+.5-16,dy=j+.5-16;if(dx*dx+dy*dy<=12*12)x.fillRect(i,j,1,1)}R(10,9,6,2,'#f1f5f9');R(8,12,2,5,'#f1f5f9');R(14,25,4,2,'#94a3b8');R(20,12,5,1,'#94a3b8')},
+ equip:function(R){R(4,26,24,4,'#475569');R(6,6,4,20,'#64748b');R(6,6,18,4,'#64748b');R(22,6,4,14,'#64748b');R(18,20,10,3,'#94a3b8');R(16,23,14,2,'#38bdf8')},
+ fab:function(R){R(3,14,26,15,'#94a3b8');for(var i=0;i<3;i++){for(var j=0;j<4;j++)R(3+i*8+j*2,10+(3-j)*1,2,5-(3-j),'#94a3b8')}R(24,3,4,12,'#64748b');R(23,1,4,3,'#e2e8f0');R(6,19,4,4,'#fde68a');R(14,19,4,4,'#fde68a');R(22,19,4,4,'#fde68a');R(13,25,6,4,'#475569')},
+ pkg:function(R){R(8,8,16,16,'#1f2937');R(10,10,2,2,'#e5e7eb');for(var i=0;i<4;i++){R(5,10+i*4,3,2,'#facc15');R(24,10+i*4,3,2,'#facc15');R(10+i*4,5,2,3,'#facc15');R(10+i*4,24,2,3,'#facc15')}},
+ cust:function(R){R(2,17,26,8,'#ef4444');R(8,11,14,6,'#ef4444');R(10,12,4,4,'#bfdbfe');R(16,12,4,4,'#bfdbfe');R(5,23,6,6,'#111827');R(19,23,6,6,'#111827');R(6,24,4,4,'#9ca3af');R(20,24,4,4,'#9ca3af');R(26,2,5,9,'#334155');R(27,3,3,6,'#38bdf8')}
+};
+var INDUSTRY=[
+ {ic:'design',nm:'IC 設計',sub:'畫出晶片的電路',
+  tw:[['聯發科 MediaTek','手機與家電晶片設計']],
+  de:[['Infineon','車用與功率晶片，同時有自己的工廠']]},
+ {ic:'mat',nm:'材料',sub:'矽晶圓與化學品',
+  tw:[['環球晶圓 GlobalWafers','矽晶圓']],
+  de:[['Siltronic','矽晶圓'],['Merck','電子級化學品與材料']]},
+ {ic:'equip',nm:'設備',sub:'做晶片的機台',
+  tw:[['家登 Gudeng','晶圓載具與光罩盒']],
+  de:[['ZEISS SMT','EUV 光學系統'],['TRUMPF','EUV 雷射光源']]},
+ {ic:'fab',nm:'晶圓製造',sub:'把設計做成晶圓',
+  tw:[['台積電 TSMC','晶圓代工'],['聯電 UMC','成熟製程代工']],
+  de:[['GlobalFoundries','Dresden 代工廠'],['ESMC','TSMC 合資，Dresden 興建中']]},
+ {ic:'pkg',nm:'封裝測試',sub:'包起來並測試',
+  tw:[['日月光 ASE','封裝測試']],
+  de:[]},
+ {ic:'cust',nm:'終端客戶',sub:'把晶片用在產品裡',
+  tw:[['鴻海 Foxconn','電子產品組裝']],
+  de:[['Bosch','車用與工業'],['Siemens','工業自動化']]}
+];
+(function(){
+  var g=$('mx'),h='<div class="ch" style="background:var(--ink)"></div>';
+  g.innerHTML='';
+  var corner=document.createElement('div');corner.className='ch';corner.style.background='var(--ink)';g.appendChild(corner);
+  INDUSTRY.forEach(function(c,i){
+    var d=document.createElement('div');d.className='ch';
+    var cv=document.createElement('canvas');cv.width=32;cv.height=32;cv.className='px';icon(cv,PIC[c.ic]);
+    d.appendChild(cv);d.insertAdjacentHTML('beforeend','<b>'+esc(c.nm)+'</b><span>'+esc(c.sub)+'</span>');
+    var ar=document.createElement('span');ar.className='arrow';ar.textContent=i<INDUSTRY.length-1?'▶':'';d.appendChild(ar);
+    g.appendChild(d);
+  });
+  [['tw','台灣 TW'],['de','德國 DE']].forEach(function(row){
+    var rl=document.createElement('div');rl.className='rl';rl.textContent=row[1];g.appendChild(rl);
+    INDUSTRY.forEach(function(c){
+      var d=document.createElement('div');
+      d.innerHTML=c[row[0]].map(function(x){return '<div class="co"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>'}).join('');
+      g.appendChild(d);
+    });
+  });
+})();
+
+/* ====================== PART 1-2: products ====================== */
+var PRODS=[
+ {n:'MOSFET',zh:'平面金屬氧化物半導體場效電晶體',c:'--pe',inv:'約 1959 年（1960 年發表，Bell Labs）',mkt:'約 1960 年代中期開始商用',kind:'最早的矽電晶體開關：電壓加在閘極上，控制通道導通或關閉。結構是平的，整個 1970 到 2000 年代的晶片都以它為主。'},
+ {n:'FinFET',zh:'鰭式場效電晶體',c:'--fin',inv:'約 1989 年概念（Hitachi DELTA），1999 年起以 FinFET 之名發展',mkt:'2011 年宣布、2012 年 Intel 22nm 上市；TSMC 16nm 約 2015 年',kind:'通道立起來像魚鰭，閘極從三面包住它，漏電更少。現在的手機、電腦處理器大量使用。'},
+ {n:'GAA',zh:'環繞式閘極（奈米片）電晶體',c:'--gaa',inv:'約 1990 年的結構概念',mkt:'Samsung 3nm 約 2022 年；TSMC N2 約 2025 年',kind:'閘極把一片片很薄的通道從四面完全包起來，控制力更強。是目前最新一代的先進製程結構。'}
+];
+(function(){
+  var g=$('prods');
+  PRODS.forEach(function(p){
+    var d=document.createElement('article');d.className='prod';d.style.setProperty('--c',p.c==='--fin'?'#f59e0b':p.c==='--gaa'?'#22a06b':'var('+p.c+')');
+    d.innerHTML='<h3>'+esc(p.n)+'</h3><p class="zh">'+esc(p.zh)+'</p><dl><dt>發明</dt><dd>'+esc(p.inv)+'</dd><dt>量產</dt><dd>'+esc(p.mkt)+'</dd></dl><p class="kind">'+esc(p.kind)+'</p>';
+    g.appendChild(d);
+  });
+  $('howAns').innerHTML='<b>簡單的答案</b><br>把幾百億個電晶體「寫」在一片只有手掌大、薄薄的矽晶圓上：用<b>薄膜沉積</b>鋪一層材料，用<b>微影</b>像照相一樣把電路圖案印上去，再用<b>蝕刻</b>把不要的部分刻掉，一層一層重複幾百道。下面先看做這件事的公司裡有哪些人，再看一片晶圓經過哪些步驟。';
+})();
+
+/* ====================== PART 1-3: R&D vs Fab ====================== */
+function lots(n,cols,color){
+  var rows=Math.ceil(n/cols),w=cols*22+8,h=rows*22+8,s='<svg class="lots" viewBox="0 0 '+w+' '+h+'" aria-hidden="true">';
+  for(var i=0;i<n;i++){var cx=14+(i%cols)*22,cy=14+Math.floor(i/cols)*22;s+='<circle cx="'+cx+'" cy="'+cy+'" r="9" fill="'+color+'" stroke="var(--ink)" stroke-width="1.5"/><path d="M'+(cx-4)+' '+(cy+9)+'h8" stroke="var(--ink)" stroke-width="1.5"/>'}
+  return s+'</svg>';
+}
+function rfHtml(){return '<div class="rf" id="rf"><div class="side"><h3 style="color:var(--rp)">RD 研發</h3>'+lots(3,3,'#bfdbfe')+'<ul><li>小規模測試：一次只做少量晶圓</li><li>改變條件，找出新製程怎麼做</li><li>目標：品質與可行性</li></ul></div>'
+ +'<div class="mid"><span>技術移轉</span><span>▶</span><span>◀</span><span>良率回饋</span></div>'
+ +'<div class="side"><h3 style="color:var(--pe)">FAB 晶圓廠</h3>'+lots(20,10,'#bfdbfe')+'<ul><li>大量生產：同一個製程重複做</li><li>穩定、可重複</li><li>目標：良率與產能</li></ul></div></div>'}
+(function(){
+  var Q=[
+   {q:'研發與 FAB 的差別在哪裡？',a:'就像 Fab 24HR 遊戲裡提到的：研發部門用小規模的測試找出新的製程怎麼做；Fab 則把定好的製程，大量而穩定地生產出來。'+rfHtml()+'<p style="margin:8px 0 0">公司結構（第 3 節）左邊是 Fab、右邊是研發，同色的人做同一類工作。</p><button class="btn" data-go="s-org" type="button">看公司內部結構</button>'},
+   {q:'Application Engineering 的職位在哪裡？',a:'AE 這個職稱主要出現在<b>設備、材料、量測公司</b>（產業鏈的上游，見第 1 節的「設備」欄）和部分晶片公司，是公司外部的人。晶圓代工廠沒有這個職稱，對應的功能分散在客戶服務、業務、設計技術等單位。設備商的 AE 在製程流程圖（第 4 節）只會碰到<b>設備 EE</b>這一條，也就是機台導入與製程開發的時候，所以畫在虛線框裡。<br><button class="btn" data-go="s-flow" type="button">看製程流程裡的 AE</button>'}
+  ];
+  var box=$('qs');
+  Q.forEach(function(x,i){
+    var d=document.createElement('div');d.className='qbox';
+    d.innerHTML='<button type="button" aria-expanded="false" aria-controls="qa'+i+'"><span class="q">?</span><span>'+esc(x.q)+'</span></button><div class="a" id="qa'+i+'" hidden>'+x.a+'</div>';
+    var bt=d.querySelector('button'),an=d.querySelector('.a');
+    bt.addEventListener('click',function(){var o=an.hidden;an.hidden=!o;bt.setAttribute('aria-expanded',o?'true':'false')});
+    an.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){$(b.dataset.go).scrollIntoView({behavior:reduced()?'auto':'smooth'})})});
+    box.appendChild(d);
+  });
+})();
+
+/* ====================== PART 1-4: process flow ====================== */
+var SI={
+ dep:function(R){R(4,22,24,4,'#94a3b8');R(4,18,24,4,'#38bdf8');R(4,14,24,4,'#fbbf24');for(var i=0;i<3;i++){R(8+i*7,3,2,7,'#e2e8f0');R(7+i*7,9,4,1,'#e2e8f0')}},
+ lit:function(R){R(4,4,24,3,'#334155');R(11,4,4,3,'#0f172a');R(18,4,4,3,'#0f172a');R(6,7,3,12,'#fde047');R(14,7,3,12,'#fde047');R(22,7,3,12,'#fde047');R(4,22,24,4,'#94a3b8');R(4,19,24,3,'#a78bfa')},
+ etch:function(R){R(4,16,24,10,'#94a3b8');R(12,16,8,7,'#e2e8f0');for(var i=0;i<3;i++){R(13+i*3,4,1,10,'#ef4444');R(12+i*3,13,3,1,'#ef4444')}R(4,14,8,2,'#78350f');R(20,14,8,2,'#78350f')},
+ imp:null,
+ cmp:function(R){R(4,22,24,6,'#94a3b8');R(6,14,4,8,'#f59e0b');R(14,14,4,8,'#f59e0b');R(22,14,4,8,'#f59e0b');R(4,6,24,5,'#64748b');R(8,3,16,3,'#94a3b8')},
+ insp:function(R,x){x.fillStyle='#334155';for(var j=0;j<32;j++)for(var i=0;i<32;i++){var dx=i+.5-13,dy=j+.5-13,d=dx*dx+dy*dy;if(d<=10*10&&d>=7*7)x.fillRect(i,j,1,1)}x.fillStyle='#bae6fd';for(var j2=0;j2<32;j2++)for(var i2=0;i2<32;i2++){var ex=i2+.5-13,ey=j2+.5-13;if(ex*ex+ey*ey<7*7)x.fillRect(i2,j2,1,1)}for(var k=0;k<8;k++)R(20+k,20+k,3,3,'#475569');R(10,10,3,3,'#ef4444')},
+ asm:null,
+ ship:function(R){R(5,12,22,15,'#d6a77a');R(14,12,4,15,'#fde68a');R(5,12,22,3,'#b98b5c');R(20,5,8,5,'#e5484d');R(3,27,26,2,'#475569')}
+};
+SI.imp=ICONS.proc;SI.asm=PIC.pkg;
+var STEPS=[
+ {n:'薄膜沉積',en:'Deposition',ic:'dep',rd:[['pe','薄膜模組']],fab:[['pe','薄膜 PE'],['ee','設備 EE']]},
+ {n:'微影',en:'Lithography',ic:'lit',rd:[['lit','微影模組']],fab:[['lit','黃光']]},
+ {n:'蝕刻',en:'Etch',ic:'etch',rd:[['pe','蝕刻模組']],fab:[['pe','蝕刻 PE']]},
+ {n:'摻雜',en:'Implant / Diffusion',ic:'imp',rd:[['pe','佈植模組']],fab:[['pe','擴散 PE']]},
+ {n:'平坦化與連線',en:'CMP & Metal',ic:'cmp',rd:[['pe','連線模組']],fab:[['pe','連線 PE']]},
+ {n:'檢測與量測',en:'Inspection',ic:'insp',rd:[['yed','ATYED'],['ma','分析']],fab:[['yed','YED']]},
+ {n:'封裝與測試',en:'Assembly & Test',ic:'asm',rd:[['ap','先進封裝']],fab:[['tst','封測']]},
+ {n:'出貨與客戶',en:'Delivery',ic:'ship',rd:[['dtco','設計技術']],fab:[['cse','客服 CS']]}
+];
+var BARS=[
+ ['TCAD','tcad','TCAD：研發階段先用模擬預測結構與電性，再決定怎麼做（主要在第 1 到 5 步）。',null],
+ ['整合','pie','整合 PIE：串起所有步驟，確認做出來的元件符合規格。',null],
+ ['製造','mfg','製造 MFG：排程與派工，讓晶圓一站接一站流動。',null],
+ ['設備','ee','設備 EE：維護每一步的機台。',true],
+ ['廠務','fac','廠務 FAC：氣體、化學品、純水與電力，全線支撐。',null]
+];
+(function(){
+  var g=$('flow');
+  function cell(cls,html){var d=document.createElement('div');if(cls)d.className=cls;if(html!==undefined)d.innerHTML=html;g.appendChild(d);return d}
+  cell('lane','輸入<br>晶圓 + 設計');
+  STEPS.forEach(function(s,i){
+    var d=cell('st','');var cv=document.createElement('canvas');cv.width=32;cv.height=32;cv.className='px';icon(cv,SI[s.ic]);
+    d.appendChild(cv);d.insertAdjacentHTML('beforeend','<b>'+(i+1)+'　'+esc(s.n)+'</b><span>'+esc(s.en)+'</span>');
+  });
+  cell('lane','RD<br>研發定義');
+  STEPS.forEach(function(s){var d=cell('');s.rd.forEach(function(r){var w=who(r[0],r[1],'s');ALLWHO.push(w);d.appendChild(w)})});
+  cell('lane','FAB<br>量產負責');
+  STEPS.forEach(function(s){var d=cell('');s.fab.forEach(function(r){var w=who(r[0],r[1],'s');ALLWHO.push(w);d.appendChild(w)})});
+  BARS.forEach(function(b){
+    cell('lane',esc(b[0]));
+    var d=cell('bar','');var w=who(b[1],null,'s');ALLWHO.push(w);d.appendChild(w);
+    var t=document.createElement('div');t.className='barl';t.textContent=b[2];d.appendChild(t);
+    if(b[3]){var gh=document.createElement('div');gh.className='ghost';gh.title='公司外部：設備商 AE';var aw=who('ae','設備商 AE（外部）','s');ALLWHO.push(aw);gh.appendChild(aw);d.appendChild(gh)}
+  });
+})();
+
+/* ====================== PART 1-5: org map ====================== */
+var BG={
+ left:'<path class="fl" d="M0 205H300V260H0Z"/><path d="M0 28H300"/><path d="M0 34H300"/><path d="M40 34V48M60 34V48M130 34V48M150 34V48M220 34V48M240 34V48"/><rect x="34" y="48" width="32" height="22" rx="3"/><rect x="124" y="48" width="32" height="22" rx="3"/><rect x="214" y="48" width="32" height="22" rx="3"/><rect x="14" y="110" width="84" height="120" rx="4"/><rect x="24" y="124" width="64" height="38" rx="3"/><circle cx="56" cy="143" r="10"/><rect x="112" y="84" width="76" height="146" rx="4"/><rect x="122" y="96" width="56" height="28"/><circle cx="150" cy="198" r="10"/><rect x="202" y="120" width="86" height="110" rx="4"/><circle cx="245" cy="160" r="26"/><circle cx="245" cy="160" r="14"/><path d="M0 232H300"/>',
+ right:'<path class="fl" d="M0 205H300V260H0Z"/><rect x="170" y="14" width="110" height="80" rx="3"/><path d="M225 14V94M170 54H280"/><rect x="14" y="30" width="130" height="84" rx="3"/><path d="M26 98C50 40 70 90 96 56S124 70 132 50"/><path d="M26 98H132M26 44V98"/><rect x="16" y="150" width="104" height="8"/><path d="M26 158V230M110 158V230"/><rect x="42" y="126" width="52" height="38" rx="3"/><rect x="204" y="150" width="84" height="8"/><path d="M214 158V230M278 158V230"/><rect x="220" y="110" width="52" height="38" rx="3"/><path d="M0 232H300"/>',
+ mid:'<path class="fl" d="M0 205H300V260H0Z"/><rect x="10" y="60" width="60" height="140" rx="3"/><rect x="230" y="60" width="60" height="140" rx="3"/><path d="M70 110H230M70 150H230"/><path d="M200 100L230 110L200 120M100 140L70 150L100 160"/><path d="M0 232H300"/>'
+};
+(function(){
+  var L=['pe','mfg','ee','lit','fac','yed','tst','cse'],M=['pie','xfer','loop','dtco'],Rr=['pe','mfg','ee','lit','fac','yed'],Ro=['tcad','ma','ap','rp'];
+  function mount(id,keys,side,extra){
+    var box=$(id);box.insertAdjacentHTML('afterbegin','<svg class="bgsvg" viewBox="0 0 300 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+BG[id]+'</svg>');
+    keys.forEach(function(k){var w=who(k,null,side==='R'?'tg':'');ALLWHO.push(w);box.appendChild(w)});
+    if(extra){var gl=document.createElement('div');gl.className='gl';gl.textContent='RD 專屬角色（產線沒有直接對應）';box.appendChild(gl);
+      extra.forEach(function(k){var w=who(k,null,'tg');ALLWHO.push(w);box.appendChild(w)})}
+  }
+  mount('left',L,'L');mount('mid',M,'M');mount('right',Rr,'R',Ro);
+  function hot(k,on){ALLWHO.forEach(function(b){if(!b.closest('#map'))return;b.classList.toggle('hot',on&&b.dataset.k===k);b.classList.toggle('dim',on&&b.dataset.k!==k)})}
+  ALLWHO.forEach(function(b){
+    if(!b.closest('#map'))return;
+    b.addEventListener('mouseenter',function(){hot(b.dataset.k,true)});b.addEventListener('mouseleave',function(){hot(b.dataset.k,false)});
+    b.addEventListener('focus',function(){hot(b.dataset.k,true)});b.addEventListener('blur',function(){hot(b.dataset.k,false)});
+  });
+})();
+
+/* ====================== PART 2-1: me + skills ====================== */
+function drawRows(cv,rows,pal){
+  var x=cv.getContext('2d');x.clearRect(0,0,cv.width,cv.height);
+  rows.forEach(function(r,y){for(var i=0;i<r.length;i++){var ch=r[i];if(ch!=='.'){x.fillStyle=pal[ch]||'#000';x.fillRect(i,y,1,1)}}});
+}
+var ME_ROWS=[
+ P('.',4,'h',8,'.',4),
+ P('.',3,'h',10,'.',3),
+ P('.',2,'h',12,'.',2),
+ P('.',2,'h',7,'s',2,'h',3,'.',2),
+ P('.',2,'h',4,'s',6,'h',2,'.',2),
+ P('.',2,'h',1,'G',4,'s',1,'G',4,'h',2,'.',2),
+ P('.',2,'h',1,'G',1,'l',2,'G',1,'s',1,'G',1,'l',2,'G',1,'h',2,'.',2),
+ P('.',2,'h',1,'G',1,'l',1,'e',1,'G',1,'s',1,'G',1,'e',1,'l',1,'G',1,'h',2,'.',2),
+ P('.',2,'h',1,'G',4,'s',1,'G',4,'h',2,'.',2),
+ P('.',2,'h',2,'s',8,'h',2,'.',2),
+ P('.',2,'h',2,'s',3,'m',2,'s',3,'h',2,'.',2),
+ P('.',3,'h',2,'s',6,'h',2,'.',3),
+ P('.',2,'h',2,'.',3,'s',2,'.',3,'h',2,'.',2),
+ P('.',2,'h',2,'w',3,'c',2,'w',3,'h',2,'.',2),
+ P('.',2,'h',1,'w',10,'h',1,'.',2),
+ P('.',2,'h',1,'w',4,'x',2,'w',4,'h',1,'.',2),
+ P('.',2,'h',1,'w',4,'x',2,'w',4,'h',1,'.',2),
+ P('.',2,'h',1,'w',4,'x',2,'w',4,'h',1,'.',2),
+ P('.',3,'h',1,'w',8,'h',1,'.',3),
+ P('.',4,'p',3,'.',2,'p',3,'.',4),
+ P('.',4,'p',3,'.',2,'p',3,'.',4),
+ P('.',4,'p',3,'.',2,'p',3,'.',4),
+ P('.',3,'d',4,'.',2,'d',4,'.',3)
+];
+function drawMe(cv){drawRows(cv,ME_ROWS,{h:'#3a2418',s:'#f2c9a5',G:'#1d1d2b',l:'#cfeeff',e:'#1d1d2b',m:'#c45a5a',w:'#f4f6fb',c:css('--accent'),x:'#d5dbea',p:'#2a3350',d:'#1d1d2b'})}
+var SK={
+ sim:function(R){
+   R(6,2,36,24,'#334155');R(8,4,32,20,'#0f1b2e');R(21,26,6,4,'#64748b');R(14,30,20,3,'#94a3b8');
+   R(11,6,1,16,'#64748b');R(11,22,26,1,'#64748b');
+   for(var i=-12;i<=12;i++){R(24+i,11-Math.round(i*i/30),1,1,'#60a5fa');R(24+i,17+Math.round(i*i/30),1,1,'#4ade80')}
+   R(24,12,1,4,'#fde047');R(23,12,3,1,'#fde047');R(23,15,3,1,'#fde047')},
+ data:function(R,x){
+   R(4,2,40,30,'#334155');R(5,5,38,26,'#f1f5f9');R(5,2,38,3,'#334155');
+   [[8,10,'#60a5fa'],[13,16,'#fb923c'],[18,12,'#60a5fa'],[23,19,'#fb923c']].forEach(function(b){R(b[0],27-b[1],4,b[1],b[2])});R(7,27,19,1,'#334155');
+   for(var j=0;j<32;j++)for(var i=0;i<48;i++){var dx=i+.5-35,dy=j+.5-17;if(dx*dx+dy*dy<=49){var a=(Math.atan2(dy,dx)+Math.PI)/(2*Math.PI);x.fillStyle=a<.4?'#f87171':(a<.7?'#fbbf24':'#38bdf8');x.fillRect(i,j,1,1)}}},
+ exp:function(R,x){
+   R(0,18,14,4,'#94a3b8');R(0,19,14,1,'#fde047');R(0,17,14,1,'#e2e8f0');
+   R(14,10,16,20,'#64748b');R(16,12,12,16,'#cbd5e1');R(19,17,6,6,'#0ea5e9');R(22,20,1,1,'#fde047');
+   x.fillStyle='#475569';for(var j=0;j<40;j++)for(var i=0;i<48;i++){var dx=i+.5-34,dy=j+.5-20;if(dx*dx+dy*dy<=100&&i>=30)x.fillRect(i,j,1,1)}
+   x.fillStyle='#94a3b8';for(var j2=0;j2<40;j2++)for(var i2=0;i2<48;i2++){var ex=i2+.5-34,ey=j2+.5-20;if(ex*ex+ey*ey<=50&&i2>=30)x.fillRect(i2,j2,1,1)}
+   R(8,30,24,2,'#334155');R(10,32,3,4,'#334155');R(26,32,3,4,'#334155');
+   R(1,1,15,9,'#f1f5f9');R(1,1,15,1,'#334155');R(1,9,15,1,'#334155');R(1,1,1,9,'#334155');R(15,1,1,9,'#334155');R(4,10,2,3,'#f1f5f9');R(5,12,1,1,'#334155');R(4,5,2,2,'#334155');R(8,5,2,2,'#334155');R(12,5,2,2,'#334155')}
+};
+var SKILLS=[
+ {k:'sim',t:'Simulation',d:'DFT (Density Functional Theory) calculation and beyond on HPC (High-Performance Computing)'},
+ {k:'data',t:'Data Analysis',d:'Data analysis and visualization with Python'},
+ {k:'exp',t:'Experiment & Collaboration',d:'Collaboration with the experimental team; hands-on experience in synchrotron spectroscopy measurement'}
+];
+(function(){
+  var g=$('skills');
+  SKILLS.forEach(function(s){
+    var d=document.createElement('div');d.className='skill';d.dataset.k=s.k;
+    var cv=document.createElement('canvas');cv.width=48;cv.height=36;cv.className='px';
+    var x=cv.getContext('2d');function R(a,b,w,h,c){x.fillStyle=c;x.fillRect(a,b,w,h)}SK[s.k](R,x);
+    d.appendChild(cv);d.insertAdjacentHTML('beforeend','<b>'+esc(s.t)+'</b><span>'+esc(s.d)+'</span>');g.appendChild(d);
+  });
+})();
+
+/* ====================== PART 2-3: three roles ====================== */
+var R3=[
+ {id:'sim',key:'tcad',c:'--tcad',title:'Simulation',ex:'例：TCAD 工程師，包含元件傳輸或設備腔體',
+  desc:['TCAD 是什麼：Technology Computer-Aided Design（半導體技術的電腦輔助設計）。在真的做晶圓之前，先用電腦模擬「製程怎麼做出這個結構」，再模擬「這個電晶體怎麼導電」，把不可行的方案先篩掉，省下很多時間和成本。','元件與輸運（參考 TSMC）：用量子物理模擬算能帶與載子輸運，引導連續 TCAD 的模型，支援新材料與奈米元件。','TCAD 設備腔體（參考 TSMC）：對設備腔體做多物理模擬（氣流、熱、電漿、電磁），支援製程與設備最佳化。','共同點：用模型替實驗先篩選方案，再用實驗校準模型。'],
+  used:{sim:'main',data:'also',exp:'also'},gaps:['NEGF 的非平衡實作','載子散射與半古典輸運','TCAD 軟體操作','CFD 與電漿模擬軟體（設備腔體）'],
+  tools:TOOLS_B,tn:'模擬的方法與工具',more:true},
+ {id:'data',key:'yed',c:'--yed',title:'Data Analysis',ex:'例：Yield Improvement，finding the defect and the origin',
+  desc:['看缺陷資料：晶圓圖、檢測機台的缺陷清單，找出異常的空間與製程規律。','換儀器確認：檢測、SEM、電性量測，一步步把問題縮小。','追根因：和製程、整合、設備工程師討論，把範圍縮到某一站。'],
+  used:{data:'main',sim:'also',exp:'also'},gaps:['SEM 與電性量測沒有實際操作過（原理可以講）','DOE、SPC 的量產實務','製程流程與機台知識'],
+  tools:TOOLS,tn:'檢測與分析的工具',
+  project:{t:'Wafer map defect pattern classification',s:'Machine Learning',d:'用公開的晶圓圖資料集，把缺陷圖樣（邊緣環、刮痕、局部群聚等）分類，並用混淆矩陣看哪些圖樣容易被搞混。',tags:['Python','scikit-learn / PyTorch','WM-811K 資料集（使用前先確認授權）'],st:'Planned'}},
+ {id:'ae',key:'ae',c:'--ae',title:'Application Engineer',ex:'good connection between scientist and customer',note:'AE 看重三件事：懂儀器、懂科學、能把兩者講給客戶聽。我對應的是 Experiment & Collaboration：和實驗團隊合作、在同步輻射上做過光譜量測，以及把物理講清楚的溝通。沒有操作過客戶端的機台，這是要補的部分。',
+  desc:['站在客戶與自家研發之間，處理客戶的問題與新需求。','Application Engineer 偏客戶支援、配方與機台驗收；Application Scientist 偏研究與新應用，博士常見。','職稱多出現在設備、材料、量測公司與部分晶片公司；晶圓代工廠沒有這個職稱。'],
+  used:{exp:'main',data:'also',sim:'also'},gaps:['客戶端的實務經驗','晶圓廠機台與製程知識','產業知識與商務溝通'],
+  tools:TOOLS_C,tn:'AE 的工作內容'}
+];
+var SKN={sim:'Simulation',data:'Data Analysis',exp:'Experiment & Collaboration'};
+(function(){
+  var g=$('three');
+  R3.forEach(function(r){
+    var b=document.createElement('button');b.type='button';b.className='rolebtn';b.dataset.id=r.id;b.setAttribute('aria-pressed','false');b.style.setProperty('--c','var('+r.c+')');
+    var say=document.createElement('span');say.className='say';say.textContent='點擊我了解更多';
+    var cv=document.createElement('canvas');cv.width=10;cv.height=14;
+    b.appendChild(say);b.appendChild(cv);b.insertAdjacentHTML('beforeend','<b>'+esc(r.title)+'</b><span class="ex">'+esc(r.ex)+'</span>');
+    b._cv=cv;b._r=r;g.appendChild(b);
+    b.addEventListener('click',function(){pickRole(r.id)});
+  });
+})();
+function paintR3(){Array.prototype.forEach.call($('three').children,function(b){sprite(b._cv,b._r.key,css(b._r.c))})}
+function miniIcon(k){
+  var cv=document.createElement('canvas');cv.width=48;cv.height=36;cv.className='mini px';
+  var x=cv.getContext('2d');function R(a,b,w,h,c){x.fillStyle=c;x.fillRect(a,b,w,h)}SK[k](R,x);
+  return '<img class="mini" alt="" src="'+cv.toDataURL()+'">';
+}
+var MORE=[
+ ['ASML（荷蘭 Veldhoven）','SEM 物理／電子光學模擬：模擬電子束與樣品的交互作用，預測 SEM 影像','物理背景；COMSOL、MATLAB；職缺偏資深','<a href="https://www.asml.com/en/careers/find-your-job/sem-physics-principal-researcher-j00344211" target="_blank" rel="noopener">職缺</a>'],
+ ['ASML 實習','電子光學模擬與資料比對（實習）','物理或光學相關學生','<a href="https://www.asml.com/en/careers/find-your-job/physics--optics-internship-electron-optics-simulations-and-data-comparison-j00318196" target="_blank" rel="noopener">職缺</a>'],
+ ['Applied Materials（美國）','電漿與 CFD 計算物理：模擬腔體裡的電漿與氣流，常結合 AI/ML','物理博士；電漿與流場模擬；Python、MATLAB、C++','<a href="https://jobs.appliedmaterials.com/job/santa-clara/computational-physicist-plasma-modeling-ai-ml-new-college-grad-doctorate-degree-santa-clara-ca/95/91858284528" target="_blank" rel="noopener">職缺</a>'],
+ ['Lam Research（美國）','RF 電漿模擬：射頻電漿設備的建模','物理或電機；電漿、電磁模擬','<a href="https://semiengineering.com/job/rf-plasma-modeling-engineer-3/" target="_blank" rel="noopener">職缺</a>'],
+ ['學界（荷蘭）','PhD 職缺：半導體元件的 SEM 影像模擬','博士生職位，不是業界職缺，但看得出需求','<a href="https://www.academictransfer.com/en/323594/phd-position-simulation-of-scanning-electron-microscope-sem-images-of-semiconductor-devices" target="_blank" rel="noopener">職缺</a>']
+];
+function moreHtml(){
+  return '<div class="sec sim-more"><h4>其他公司的模擬職缺長什麼樣</h4><p style="margin:0 0 8px;font-size:14px">我搜尋公開職缺，整理成下表。可以看到「模擬」分成幾種：元件與輸運、製程模擬、設備腔體（電漿與氣流）、檢測量測物理（電子束、光學）。職缺會變動，多數要求相關經驗，這裡只看趨勢，投遞前請看原文。</p><div class="scroll"><table><thead><tr><th>公司</th><th>模擬什麼</th><th>常見要求</th><th>連結</th></tr></thead><tbody>'
+   +MORE.map(function(m){return '<tr><td>'+esc(m[0])+'</td><td>'+esc(m[1])+'</td><td>'+esc(m[2])+'</td><td>'+m[3]+'</td></tr>'}).join('')+'</tbody></table></div></div>';
+}
+var curRole=null;
+function pickRole(id){
+  var r=R3.filter(function(x){return x.id===id})[0];
+  if(curRole===id){return}
+  curRole=id;
+  Array.prototype.forEach.call($('three').children,function(b){b.setAttribute('aria-pressed',b.dataset.id===id?'true':'false')});
+  var p=$('rolePanel');p.innerHTML='';
+  var d=document.createElement('div');d.className='panel';d.style.setProperty('--c','var('+r.c+')');
+  d.innerHTML='<h3>'+esc(r.title)+'　'+esc(r.ex)+'</h3>'+ul(r.desc)
+    +(r.note?'<div class="note">'+esc(r.note)+'</div>':'')
+    +'<div class="sec"><h4>I bring</h4><div class="chips">'+['sim','data','exp'].map(function(k){return '<span class="chip'+(r.used[k]==='main'?' main':'')+'">'+miniIcon(k)+esc(SKN[k])+(r.used[k]==='main'?'：main':'：also')+'</span>'}).join('')+'</div></div>'
+    +'<div class="sec"><h4>Still to learn</h4>'+ul(r.gaps)+'</div>'
+    +'<div class="sec"><h4>'+esc(r.tn)+'（點圖看原理）</h4><div class="tools" id="tl2"></div></div>';
+  if(r.more)d.insertAdjacentHTML('beforeend',moreHtml());
+  p.appendChild(d);mkTools(d.querySelector('#tl2'),r.tools);
+  if(r.project){
+    var pj=document.createElement('div');pj.className='proj';
+    pj.innerHTML='<h4 style="font-family:var(--f-jp);font-size:16px;margin:0 0 6px;color:var(--accent)">Extension project（'+esc(r.project.st)+'）</h4><div class="scene" id="scene"></div>'
+      +'<p style="margin:10px 0 4px"><b>'+esc(r.project.t)+'</b>　'+esc(r.project.s)+'</p><p style="margin:0;font-size:14px">'+esc(r.project.d)+'</p><div class="chips">'+r.project.tags.map(function(t){return '<span class="chip">'+esc(t)+'</span>'}).join('')+'</div>';
+    d.appendChild(pj);
+    var sc=pj.querySelector('#scene');
+    var c1=document.createElement('canvas');c1.width=10;c1.height=14;c1.className='px';c1.style.cssText='width:70px;height:98px';sprite(c1,r.key,css(r.c));
+    var cm=document.createElement('canvas');cm.width=32;cm.height=22;cm.className='px';cm.style.cssText='width:176px;height:121px;max-width:100%';
+    (function(c){var x=c.getContext('2d');function R(a,b,w,h,col){x.fillStyle=col;x.fillRect(a,b,w,h)}
+      R(0,0,32,22,'#334155');R(1,1,30,18,'#0f1b2e');R(12,19,8,2,'#64748b');
+      for(var j=0;j<18;j++)for(var i=0;i<14;i++){var dx=i+.5-7,dy=j+.5-9;if(dx*dx+dy*dy<=30){var bad=dx*dx+dy*dy>18;R(2+i,1+j,1,1,bad?'#ef4444':'#4ade80')}}
+      R(18,4,10,3,'#f87171');R(18,9,7,3,'#fbbf24');R(18,14,4,3,'#38bdf8');R(17,3,1,14,'#64748b')})(cm);
+    var c2=document.createElement('canvas');c2.width=16;c2.height=23;c2.className='px';c2.style.cssText='width:80px;height:115px';drawMe(c2);
+    sc.appendChild(c1);sc.appendChild(cm);sc.appendChild(c2);
+  }
+  p.scrollIntoView({behavior:reduced()?'auto':'smooth',block:'nearest'});
+}
+
+/* ====================== navigation ====================== */
+var TOCS={
+ 1:[['s-chain','產業鏈'],['s-tr','產品'],['s-org','公司內部結構'],['s-flow','製程流程']],
+ 2:[['s-me','新同事 YITING'],['s-ask','What and how can I contribute']]
+};
+function setPart(n,noScroll){
+  $('part1').hidden=n!==1;$('part2').hidden=n!==2;
+  $('b1').setAttribute('aria-pressed',n===1?'true':'false');$('b2').setAttribute('aria-pressed',n===2?'true':'false');
+  var t=$('toc');t.innerHTML='';
+  TOCS[n].forEach(function(x){var a=document.createElement('a');a.textContent=x[1];a.tabIndex=0;a.setAttribute('role','link');
+    function go(){$(x[0]).scrollIntoView({behavior:reduced()?'auto':'smooth'})}
+    a.addEventListener('click',go);a.addEventListener('keydown',function(e){if(e.key==='Enter')go()});t.appendChild(a)});
+  try{history.replaceState(null,'','#part'+n)}catch(e){}
+  if(!noScroll)window.scrollTo(0,0);
+}
+$('b1').addEventListener('click',function(){setPart(1)});$('b2').addEventListener('click',function(){setPart(2)});
+$('to2').addEventListener('click',function(){setPart(2)});$('to1').addEventListener('click',function(){setPart(1)});
+
+/* ====================== paint + start ====================== */
+function paintAll(){paintWho();paintR3();drawMe($('meCv'))}
+paintAll();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paintAll)}catch(e){}
+(function(){var h='';try{h=location.hash}catch(e){}setPart(h==='#part2'?2:1,true)})();
+
+</script>
