@@ -230,7 +230,7 @@ canvas.px{image-rendering:pixelated}
 .ptitle{font-size:clamp(22px,5vw,32px);margin:26px 0 6px}
 .hd{font-size:clamp(14px,2.8vw,18px);padding:10px 14px;line-height:1.7}
 section.blk{margin-top:54px;scroll-margin-top:200px;position:relative}
-section.blk+section.blk:not(#s-roles)::before{content:'';display:block;width:0;height:0;margin:-36px auto 16px;border-left:18px solid transparent;border-right:18px solid transparent;border-top:20px solid var(--accent)}
+section.blk+section.blk:not(#s-roles):not(#s-qa)::before{content:'';display:block;width:0;height:0;margin:-36px auto 16px;border-left:18px solid transparent;border-right:18px solid transparent;border-top:20px solid var(--accent)}
 .toc{display:flex;flex-direction:column;gap:6px}
 .toc .tg{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .toc .tg b{font-family:var(--f-pix);font-size:10px;width:64px;color:var(--muted)}
@@ -282,11 +282,106 @@ section.blk+section.blk:not(#s-roles):not(#s-qa):not(#s-twist)::before{margin:-6
 .bub2::before{content:'';position:absolute;left:-12px;bottom:14px;border:8px solid transparent;border-right-color:var(--line);border-left:0}
 .who2.sil canvas{filter:drop-shadow(0 0 0 #000)}
 
+/* ===== v11 ===== */
+.sub{max-width:none}
+section.blk{margin-top:134px}
+section.blk+section.blk:not(#s-roles):not(#s-qa):not(#s-twist)::before{margin:-84px auto 42px}
+section.blk+#s-twist::before{margin:-84px auto 42px}
+#s-qa{margin-top:28px}
+#s-twist{margin-top:134px}
+.nav{padding:8px 0 6px}
+.toc{flex-direction:row;flex-wrap:wrap;gap:6px 16px;align-items:center;margin-top:6px}
+.toc .tg{gap:6px;align-items:center}
+.toc .tg+.tg{border-left:3px solid var(--line);padding-left:16px}
+.toc .tg .pbtn{min-width:0;padding:3px 10px;gap:6px}
+.toc .tg .pbtn b{font-size:14px;line-height:1}
+.toc .tg .pbtn span{font-size:15px;line-height:1}
+.toc .tg a{font-size:14px;padding:3px 9px}
+.alarm{font-size:clamp(14px,3vw,22px);padding:10px 18px;font-family:var(--f-pix),var(--f-jp)}
+.nextbig{appearance:none;display:block;margin:0 auto;font-family:var(--f-pix),var(--f-jp);font-size:clamp(14px,3vw,22px);padding:10px 18px;background:var(--accent);color:#fff;border:3px solid var(--line);box-shadow:4px 4px 0 var(--shadow);cursor:pointer}
+.nextbig:focus-visible{outline:4px solid var(--ink);outline-offset:2px}
+.scene2{gap:26px;align-items:flex-end}
+.who2.wco canvas{width:112px;height:112px}
+.who2.mg canvas{width:50px;height:70px}
+.ph canvas#twPh{width:56px;height:56px}
+.bub2{display:flex;align-items:center;gap:14px;max-width:none;font-size:18px;padding:12px 16px}
+.bub2 .tx{white-space:nowrap;line-height:1.5}
+.bub2::before{left:-14px;bottom:auto;top:50%;margin-top:-9px;border:9px solid transparent;border-right:12px solid var(--line);border-left:0}
+.silw{position:relative;flex:none}
+.silw canvas{width:72px;height:96px;display:block;image-rendering:pixelated}
+.silw .qm{position:absolute;left:0;right:0;top:34%;text-align:center;font-family:var(--f-pix);font-size:22px;color:#fff}
+.who2.sil{display:none}
+@keyframes shk{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-2px) rotate(-4deg)}40%{transform:translateX(2px) rotate(4deg)}60%{transform:translateX(-2px) rotate(-3deg)}80%{transform:translateX(2px) rotate(3deg)}}
+.shake{animation:shk .5s infinite}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}}
+.rf3{display:grid;grid-template-columns:minmax(150px,.8fr) 1fr 1fr;gap:12px;align-items:stretch;padding-top:12px}
+.rf3 .c0{display:flex;flex-direction:column;gap:8px}
+.rf3 .c0 b{font-family:var(--f-jp);font-size:17px}
+.rf3 .c0 p{margin:0}
+.rf3 .side{border:3px solid var(--line);background:var(--panel);padding:12px;min-width:0}
+.rf3 .side h3{font-family:var(--f-pix);font-size:11px;margin:0 0 8px}
+.rf3 .side ul{margin:6px 0 0;padding-left:1.1em;font-size:14px}
+@media (max-width:760px){.rf3{grid-template-columns:1fr}.bub2{flex-wrap:wrap}.bub2 .tx{white-space:normal}}
+
+.toc{gap:6px 12px}
+.toc .tg .pbtn{padding:2px 8px;gap:5px}
+.toc .tg .pbtn b{font-size:13px}
+.toc .tg .pbtn span{font-size:14px}
+.toc .tg a{font-size:13px;padding:3px 7px}
+.toc .tg+.tg{padding-left:12px}
+.rf3 .c0 .btn{align-self:flex-start}
+
+/* ===== v11 skill modals ===== */
+.ic2{image-rendering:pixelated;display:block}
+.ic2big{display:flex;justify-content:center;margin:8px 0;background:var(--floor);border:3px solid var(--line);padding:10px}
+.itms{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px}
+.itm{appearance:none;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;border:3px solid var(--line);background:var(--floor);color:inherit;padding:10px 8px;cursor:pointer;font-family:var(--f-jp);font-size:14px}
+.itm span{font-size:12px;color:var(--muted)}
+.itm:hover{background:var(--panel)}
+.itm:focus-visible{outline:4px solid var(--ink)}
+.sys{display:flex;gap:12px;border:3px solid var(--line);background:var(--floor);padding:10px;margin-top:10px}
+.sys .ic2{flex:none}
+.sys b{font-family:var(--f-jp);font-size:16px}
+.sys .w{font-size:12px;color:var(--muted);margin:2px 0 4px}
+.sys p{margin:4px 0 0;font-size:14px}
+.flowline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 4px;font-family:var(--f-jp);font-size:14px}
+.flowline span{border:2px solid var(--line);background:var(--panel);padding:2px 10px}
+.flowline i{font-style:normal;color:var(--accent)}
+.skill .hint{font-style:normal;font-size:12px;color:var(--accent);font-family:var(--f-jp)}
+.chip[data-k]:hover{outline:2px solid var(--accent)}
+@media (max-width:560px){.sys{flex-direction:column}}
+
+/* ===== v12 ===== */
+.mecol{display:flex;justify-content:center}
+.mebtn{appearance:none;background:transparent;border:0;color:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:12px;padding:0;font:inherit}
+.mebtn:focus-visible{outline:4px solid var(--ink);outline-offset:4px}
+.say2{position:relative;display:flex;align-items:center;gap:8px;max-width:230px;border:3px solid var(--line);background:var(--panel);padding:8px 10px;font-family:var(--f-jp);font-size:15px;line-height:1.4;text-align:left;box-shadow:3px 3px 0 var(--shadow)}
+.say2::after{content:'';position:absolute;left:50%;bottom:-12px;margin-left:-8px;border:8px solid transparent;border-top:10px solid var(--line);border-bottom:0}
+.say2 canvas{width:60px;height:60px;flex:none;image-rendering:pixelated}
+.mebtn:hover .say2{background:var(--floor)}
+iframe.slides{width:100%;height:68vh;border:3px solid var(--line);background:#fff}
+#s-ask{margin-top:134px}
+.toc{flex-wrap:nowrap}
+.toc.wrap{flex-wrap:wrap}
+.toc .tg{flex:none}
+.scene2{align-items:center}
+.who2.mg{position:relative}
+.who2.mg span,.who2.wco span{position:absolute;top:100%;left:0;right:0;text-align:center;margin-top:4px}
+.who2.wco{position:relative}
+.who2.mg canvas{width:60px;height:84px}
+.silw canvas{width:72px;height:96px}
+.bub2::before{content:'';position:absolute;left:-16px;top:50%;margin-top:-11px;border:11px solid transparent;border-right:16px solid var(--line);border-left:0;border-top-width:11px}
+.bub2::after{content:'';position:absolute;left:-10px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:12px solid var(--panel);border-left:0}
+.ph canvas#twPh{width:56px;height:56px;align-self:center}
+.ph{align-items:center}
+.twist .next{margin-top:56px}
+.scene2{padding-bottom:26px}
+
 </style>
 <div class="wrap">
   <header class="nav" id="nav">
     <h1>FROM PHYSICS TO SEMICONDUCTORS</h1>
-    <p class="sub">一個物理博士怎麼看半導體，以及我能在哪裡幫上忙。版面靈感來自 fab24hr.com 的晶圓廠遊戲。</p>
+    <p class="sub">一個像素風格的互動式網頁，說明半導體產業怎麼運作，以及介紹一位物理博士可以在哪裡貢獻。</p>
     <nav class="toc" id="toc" aria-label="Table of contents"></nav>
   </header>
 
@@ -333,14 +428,14 @@ section.blk+section.blk:not(#s-roles):not(#s-qa):not(#s-twist)::before{margin:-6
 
     <section class="blk" id="s-twist">
       <div class="twist">
-        <div class="alarm">緊急事件！</div>
+        <div class="alarm">!!!緊急事件!!!</div>
         <div class="scene2">
-          <div class="who2"><canvas class="px" id="twCo" width="32" height="32" aria-label="Company"></canvas><span>公司</span></div>
-          <div class="who2"><canvas class="px" id="twMg" width="10" height="14" aria-label="Manager"></canvas><span>主管</span></div>
-          <div class="ph"><canvas class="px" id="twPh" width="32" height="32" aria-label="Phone"></canvas><div class="bub2">我們公司需要招募一名新人！</div></div>
-          <div class="who2 sil"><canvas class="px" id="twSh" width="10" height="14" aria-label="Silhouette"></canvas><span>？</span></div>
+          <div class="who2 wco"><canvas class="px" id="twCo" width="32" height="32" aria-label="Company"></canvas><span>公司</span></div>
+          <div class="who2 mg"><canvas class="px" id="twMg" width="10" height="14" aria-label="Manager"></canvas><span>主管</span></div>
+          <div class="ph"><canvas class="px shake" id="twPh" width="32" height="32" aria-label="Phone"></canvas>
+            <div class="bub2"><div class="tx">我們公司需要<br>招募一名新人！</div><div class="silw"><canvas class="px" id="twSh" width="12" height="16" aria-label="Silhouette"></canvas><span class="qm">?</span></div></div></div>
         </div>
-        <div class="next"><button class="btn" id="to2" type="button">NEXT：招募新同事 ▶</button></div>
+        <div class="next"><button class="nextbig" id="to2" type="button">NEXT：招募新同事 ▶</button></div>
       </div>
     </section>
   </main>
@@ -350,7 +445,7 @@ section.blk+section.blk:not(#s-roles):not(#s-qa):not(#s-twist)::before{margin:-6
       <h2 class="hd">新同事 YITING</h2>
       <div class="card">
         <div class="me">
-          <canvas class="px" id="meCv" width="16" height="23" style="width:112px;height:161px" aria-label="Yi-Ting pixel portrait" role="img"></canvas>
+          <div class="mecol"><button type="button" class="mebtn" id="meBtn" aria-label="點擊我讓我來為你介紹我的研究"><span class="say2">點擊我讓我來為你介紹我的研究！<canvas class="px" id="orbCv" width="32" height="32" aria-hidden="true"></canvas></span><canvas class="px" id="meCv" width="16" height="23" style="width:112px;height:161px" aria-label="Yi-Ting pixel portrait" role="img"></canvas></button></div>
           <div class="bub">
             <p><b>Education</b>　Bachelor to PhD: Physics Department</p>
             <p><b>PhD research</b>　Simulation of molecular materials. I simulate how electrons behave, and how that behavior shows up in observables such as the spectral function and magnetic properties, to find the physical mechanism behind unusual phenomena.</p>
@@ -361,19 +456,13 @@ section.blk+section.blk:not(#s-roles):not(#s-qa):not(#s-twist)::before{margin:-6
     </section>
 
     <section class="blk" id="s-ask">
-      <h2 class="hd">What and how can I contribute</h2>
-      <div class="ask"><div class="bubble">What and how can I contribute?</div><div class="arr">▼</div></div>
-    </section>
-
-    <section class="blk" id="s-roles">
-      <p class="lead">我覺得比較可行的三個位置（點一下角色，看看這個位置在做什麼）</p>
+      <h2 class="hd">What and how can I contribute?</h2>
       <div class="three" id="three"></div>
       <div id="rolePanel"></div>
     </section>
     <div class="next"><button class="btn" id="to1" type="button">◀ BACK：半導體介紹</button></div>
   </main>
 
-  <p class="foot">內容為原型，用公開資訊與一般產業常識整理，職稱與分工依公司而異。像素角色與插畫為原創，版面靈感來自 fab24hr.com；電晶體年份依公開文獻，標「約」的是不同來源略有出入。</p>
 </div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#e6a400"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#e5484d"/></marker></defs></svg>
@@ -587,7 +676,7 @@ function show(html,colorVar,from){
   $('dlg').style.setProperty('--c','var('+(colorVar||'--accent')+')');
   ov.hidden=false;$('dx').focus();
 }
-function closeM(){ov.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+function closeM(){$('dlg').style.width='';ov.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
 $('dx').addEventListener('click',closeM);
 ov.addEventListener('click',function(e){if(e.target===ov)closeM()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM()});
@@ -614,11 +703,14 @@ var VAR={
  pie:{},xfer:{},loop:{}
 };
 var HAT={pe:'#2b2b3a',mfg:'#d97706',ee:'#facc15',lit:'#fde68a',fac:'#f97316',yed:'#3b2a20',tst:'#164e63',cse:'#4a044e',pie:'#4b3b1a',xfer:'#6b2147',loop:'#0c4a6e',dtco:'#1e1b4b',tcad:'#3f6212',ma:'#451a03',ap:'#134e4a',rp:'#0f172a',ae:'#5b21b6'};
-function sprite(cv,k,color){
+function lighten(hex,t){var n=parseInt(hex.slice(1),16),r=n>>16,g=n>>8&255,b=n&255;function f(v){return Math.round(v+(255-v)*t)}return 'rgb('+f(r)+','+f(g)+','+f(b)+')'}
+function sprite(cv,k,color,suit){
+  if(suit&&color&&color[0]==='#')color=lighten(color,.45);
   var rows=BASE.slice(),v=VAR[k]||{};Object.keys(v).forEach(function(i){rows[i]=v[i]});
   var pal={s:'#f2c9a5',d:'#1d1d2b',c:color,p:'#2a3350',t:HAT[k]||'#333',g:'#9be7ff',w:'#f4f6fb',x:'#1d1d2b'};
   var x=cv.getContext('2d');x.clearRect(0,0,10,14);
   rows.forEach(function(r,y){for(var i=0;i<10;i++){var ch=r[i];if(ch&&ch!=='.'){x.fillStyle=pal[ch]||'#000';x.fillRect(i,y,1,1)}}});
+  if(suit){x.fillStyle='#e8eef7';for(var yy=1;yy<=5;yy++){x.fillRect(1,yy,1,1);x.fillRect(8,yy,1,1)}x.fillRect(2,0,1,1);x.fillRect(7,0,1,1)}
 }
 
 /* ====================== roles ====================== */
@@ -641,19 +733,19 @@ var ROLES={
  ae:{c:'--ae',tag:'AE',nm:'設備商 AE',body:'Application Engineer（應用工程師）通常在設備、材料或量測公司，是公司外部的人。站在客戶（晶圓廠）與自家研發之間，在機台導入、製程開發和驗收時支援客戶。晶圓廠這邊對應的窗口是設備 EE。'},
  rp:{c:'--rp',tag:'R&P',nm:'前瞻研究',fab:null,rd:'探索未來幾代的新元件結構與新材料，還沒進入產品開發。',link:'TSMC 的研發分工包含 Research & Pathfinding。'}
 };
-function roleCanvas(cv,k){sprite(cv,k,css(ROLES[k].c))}
-function who(k,label,cls){
+function roleCanvas(cv,k,suit){sprite(cv,k,css(ROLES[k].c),suit)}
+function who(k,label,cls,suit){
   var r=ROLES[k],b=document.createElement('button');b.type='button';b.className='who'+(cls?' '+cls:'')+(r.target&&cls&&cls.indexOf('tg')>=0?' target':'');
   b.dataset.k=k;b.style.setProperty('--c','var('+r.c+')');
   var cv=document.createElement('canvas');cv.width=10;cv.height=14;
   var t=document.createElement('span');t.className='tag';t.textContent=r.tag;
   var n=document.createElement('span');n.className='nm';n.textContent=label||r.nm;
-  b.appendChild(cv);b.appendChild(t);b.appendChild(n);b._cv=cv;b._k=k;
+  b.appendChild(cv);b.appendChild(t);b.appendChild(n);b._cv=cv;b._k=k;b._suit=!!suit;
   b.addEventListener('click',function(){openRole(k,b)});
   return b;
 }
 var ALLWHO=[];
-function paintWho(){ALLWHO.forEach(function(b){roleCanvas(b._cv,b._k)})}
+function paintWho(){ALLWHO.forEach(function(b){roleCanvas(b._cv,b._k,b._suit)})}
 
 function openRole(k,from){
   var r=ROLES[k],h;
@@ -789,12 +881,18 @@ function rfHtml(){return '<div class="rf" id="rf"><div class="side"><h3 style="c
 (function(){
   var cv=$('twCo');icon(cv,PIC.fab);
   var mg=$('twMg');sprite(mg,'pie',css('--pie'));
-  var ph=$('twPh');icon(ph,function(R){R(8,1,16,30,'#1f2937');R(10,4,12,20,'#bae6fd');R(14,26,4,3,'#475569');R(13,2,6,1,'#475569')});
-  var sh=$('twSh');sprite(sh,'pe','#000');var x=sh.getContext('2d');x.globalCompositeOperation='source-in';x.fillStyle='#0b0b12';x.fillRect(0,0,10,14);
+  var ph=$('twPh');icon(ph,function(R){R(10,6,12,22,'#1f2937');R(11,8,10,14,'#bae6fd');R(14,24,4,2,'#475569');R(13,7,6,1,'#475569');
+    var vc='#fbbf24';R(7,12,1,8,vc);R(5,14,1,4,vc);R(3,15,1,2,vc);R(24,12,1,8,vc);R(26,14,1,4,vc);R(28,15,1,2,vc)});
+  var sh=$('twSh'),tmp=document.createElement('canvas');tmp.width=10;tmp.height=14;sprite(tmp,'pe','#000');
+  var tx=tmp.getContext('2d');tx.globalCompositeOperation='source-in';tx.fillStyle='#0b0b12';tx.fillRect(0,0,10,14);
+  var wt=document.createElement('canvas');wt.width=10;wt.height=14;var wx=wt.getContext('2d');wx.drawImage(tmp,0,0);wx.globalCompositeOperation='source-in';wx.fillStyle='#fff';wx.fillRect(0,0,10,14);
+  var sx=sh.getContext('2d');[[0,1],[2,1],[1,0],[1,2]].forEach(function(o){sx.drawImage(wt,o[0],o[1])});sx.drawImage(tmp,1,1);
 })();
 (function(){
   var Q=[
-   {q:'研發與 FAB 的差別在哪裡？',a:'就像 Fab 24HR 遊戲裡提到的：研發部門用小規模的測試找出新的製程怎麼做；Fab 則把定好的製程，大量而穩定地生產出來。'+rfHtml()+'<p style="margin:8px 0 0">公司結構（第 3 節）左邊是 Fab、右邊是研發，同色的人做同一類工作。</p><button class="btn" data-go="s-org" type="button">看公司內部結構</button>'},
+   {q:'研發與 FAB 的差別在哪裡？',a:'<div class="rf3"><div class="c0"><b>研發與 FAB 的差別在哪裡？</b><p>就像 Fab 24HR 遊戲裡提到的：研發部門用小規模的測試找出新的製程怎麼做；Fab 則把定好的製程，大量而穩定地生產出來。</p><button class="btn" data-go="s-org" type="button">看公司內部結構</button></div>'
+     +'<div class="side"><h3 style="color:var(--pe)">FAB 晶圓廠</h3>'+lots(20,10,'#bfdbfe')+'<ul><li>大量生產：同一個製程重複做</li><li>穩定、可重複</li><li>目標：良率與產能</li></ul></div>'
+     +'<div class="side"><h3 style="color:var(--rp)">RD 研發</h3>'+lots(3,3,'#bfdbfe')+'<ul><li>小規模測試：一次只做少量晶圓</li><li>改變條件，找出新製程怎麼做</li><li>目標：品質與可行性</li></ul></div></div>'},
    {q:'Application Engineering 的職位在哪裡？',a:'AE 這個職稱主要出現在<b>設備、材料、量測公司</b>（產業鏈的上游，見第 1 節的「設備」欄）和部分晶片公司，是公司外部的人。晶圓代工廠沒有這個職稱，對應的功能分散在客戶服務、業務、設計技術等單位。設備商的 AE 在製程流程圖（第 4 節）只會碰到<b>設備 EE</b>這一條，也就是機台導入與製程開發的時候，所以畫在虛線框裡。<br><button class="btn" data-go="s-flow" type="button">看製程流程裡的 AE</button>'}
   ];
   var box=$('qs');
@@ -848,7 +946,7 @@ var BARS=[
   cell('lane','RD<br>研發定義');
   STEPS.forEach(function(s){var d=cell('');s.rd.forEach(function(r){var w=who(r[0],r[1],'s');ALLWHO.push(w);d.appendChild(w)})});
   cell('lane','FAB<br>量產負責');
-  STEPS.forEach(function(s){var d=cell('');s.fab.forEach(function(r){var w=who(r[0],r[1],'s');ALLWHO.push(w);d.appendChild(w)})});
+  STEPS.forEach(function(s){var d=cell('');s.fab.forEach(function(r){var w=who(r[0],r[1],'s',true);ALLWHO.push(w);d.appendChild(w)})});
   BARS.forEach(function(b){
     cell('lane',esc(b[0]));
     var d=cell('bar','');var w=who(b[1],null,'s');ALLWHO.push(w);d.appendChild(w);
@@ -867,7 +965,7 @@ var BG={
   var L=['pe','mfg','ee','lit','fac','yed','tst','cse'],M=['pie','xfer','loop','dtco'],Rr=['pe','mfg','ee','lit','fac','yed'],Ro=['tcad','ma','ap','rp'];
   function mount(id,keys,side,extra){
     var box=$(id);box.insertAdjacentHTML('afterbegin','<svg class="bgsvg" viewBox="0 0 300 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+BG[id]+'</svg>');
-    keys.forEach(function(k){var w=who(k,null,side==='R'?'tg':'');ALLWHO.push(w);box.appendChild(w)});
+    keys.forEach(function(k){var w=who(k,null,side==='R'?'tg':'',side==='L');ALLWHO.push(w);box.appendChild(w)});
     if(extra){var gl=document.createElement('div');gl.className='gl';gl.textContent='RD 專屬角色（產線沒有直接對應）';box.appendChild(gl);
       extra.forEach(function(k){var w=who(k,null,'tg');ALLWHO.push(w);box.appendChild(w)})}
   }
@@ -1001,7 +1099,7 @@ function pickRole(id){
   var d=document.createElement('div');d.className='panel';d.style.setProperty('--c','var('+r.c+')');
   d.innerHTML='<h3>'+esc(r.title)+'　'+esc(r.ex)+'</h3>'+ul(r.desc)
     +(r.note?'<div class="note">'+esc(r.note)+'</div>':'')
-    +'<div class="sec"><h4>I bring</h4><div class="chips">'+['sim','data','exp'].map(function(k){return '<span class="chip'+(r.used[k]==='main'?' main':'')+'">'+miniIcon(k)+esc(SKN[k])+(r.used[k]==='main'?'：main':'：also')+'</span>'}).join('')+'</div></div>'
+    +'<div class="sec"><h4>I bring</h4><div class="chips">'+['sim','data','exp'].map(function(k){return '<span class="chip'+(r.used[k]==='main'?' main':'')+'" data-k="'+k+'" tabindex="0" role="button" style="cursor:pointer">'+miniIcon(k)+esc(SKN[k])+(r.used[k]==='main'?'：main':'：also')+'</span>'}).join('')+'</div></div>'
     +'<div class="sec"><h4>Still to learn</h4>'+ul(r.gaps)+'</div>'
     +'<div class="sec"><h4>'+esc(r.tn)+'（點圖看原理）</h4><div class="tools" id="tl2"></div></div>';
   if(r.more)d.insertAdjacentHTML('beforeend',moreHtml());
@@ -1036,8 +1134,8 @@ var NAVIC=[];
     var g=document.createElement('div');g.className='tg'+(n===2?' p2':'');
     var pb=document.createElement('button');pb.type='button';pb.id='b'+n;pb.className='pbtn';pb.setAttribute('aria-pressed',n===1?'true':'false');
     var c1=document.createElement('canvas'),c2=document.createElement('canvas');c1.className=c2.className='px nic';
-    if(n===1){c1.width=32;c1.height=32;c2.width=10;c2.height=14;c1.style.cssText='width:40px;height:40px';c2.style.cssText='width:30px;height:42px';icon(c1,TIC.planar);NAVIC.push(function(){sprite(c2,'pe',css('--pe'))})}
-    else{c1.width=16;c1.height=23;c2.width=48;c2.height=36;c1.style.cssText='width:32px;height:46px';c2.style.cssText='width:60px;height:45px';NAVIC.push(function(){drawMe(c1)});(function(){var x=c2.getContext('2d');function R(a,b,w,h,c){x.fillStyle=c;x.fillRect(a,b,w,h)}SK.sim(R,x)})()}
+    if(n===1){c1.width=32;c1.height=32;c2.width=10;c2.height=14;c1.style.cssText='width:30px;height:30px';c2.style.cssText='width:24px;height:34px';icon(c1,TIC.planar);NAVIC.push(function(){sprite(c2,'pe',css('--pe'))})}
+    else{c1.width=16;c1.height=23;c2.width=48;c2.height=36;c1.style.cssText='width:24px;height:34px';c2.style.cssText='width:44px;height:33px';NAVIC.push(function(){drawMe(c1)});(function(){var x=c2.getContext('2d');function R(a,b,w,h,c){x.fillStyle=c;x.fillRect(a,b,w,h)}SK.sim(R,x)})()}
     pb.appendChild(c1);pb.appendChild(c2);
     pb.insertAdjacentHTML('beforeend','<b>PART '+n+'</b><span>'+(n===1?'半導體介紹':'我的介紹')+'</span>');
     g.appendChild(pb);
@@ -1048,10 +1146,13 @@ var NAVIC=[];
   });
 })();
 var curPart=1;
+function fitToc(){var t=$('toc');t.style.zoom='';if(window.innerWidth<720){t.classList.add('wrap');return}t.classList.remove('wrap');
+  var w=t.scrollWidth,av=t.parentNode.clientWidth;if(w>av)t.style.zoom=Math.max(.55,(av/w)-.005)}
+window.addEventListener('resize',fitToc);
 var SPY=[];
 function spy(){
   var list=TOCS[curPart],cur=-1;
-  list.forEach(function(x,i){var el=$(x[0]);if(el&&el.getBoundingClientRect().top<=Math.max(230,window.innerHeight*.3))cur=i});
+  if(window.scrollY>40)list.forEach(function(x,i){var el=$(x[0]);if(el&&el.getBoundingClientRect().top<=Math.max(230,window.innerHeight*.3))cur=i});
   Array.prototype.forEach.call(document.querySelectorAll('#toc .tg a'),function(a){a.classList.remove('on')});
   if(cur>=0){var g=document.querySelectorAll('#toc .tg')[curPart-1];var as=g.querySelectorAll('a');if(as[cur])as[cur].classList.add('on')}
 }
@@ -1068,9 +1169,106 @@ $('b1').addEventListener('click',function(){setPart(1)});$('b2').addEventListene
 $('to2').addEventListener('click',function(){setPart(2)});$('to1').addEventListener('click',function(){setPart(1)});
 
 /* ====================== paint + start ====================== */
-function paintAll(){paintWho();paintR3();drawMe($('meCv'));NAVIC.forEach(function(f){f()})}
+function paintAll(){fitToc();paintWho();paintR3();drawMe($('meCv'));NAVIC.forEach(function(f){f()})}
 paintAll();
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paintAll)}catch(e){}
 (function(){var h='';try{h=location.hash}catch(e){}setPart(h==='#part2'?2:1,true)})();
+
+/* ====================== PART 2: skill detail modals ====================== */
+var IC2={
+ py:function(R){R(5,3,22,26,'#e2e8f0');for(var i=0;i<4;i++)R(3,6+i*6,5,2,'#475569');R(10,8,12,2,'#3b82f6');R(10,13,9,2,'#facc15');R(10,18,13,2,'#3b82f6');R(10,23,7,2,'#22a06b')},
+ hdf:function(R){R(4,5,24,6,'#64748b');R(4,13,24,6,'#94a3b8');R(4,21,24,6,'#cbd5e1');for(var i=0;i<3;i++){R(7,7+i*8,3,2,'#e2e8f0');R(24,7+i*8,2,2,'#38bdf8')}},
+ maxent:function(R){R(3,27,26,1,'#475569');for(var i=2;i<30;i++){var y=Math.round(24-14*Math.exp(-(i-16)*(i-16)/30));R(i,y,1,2,'#3b82f6');var n=((i*7)%5)-2;R(i,y+n-2,1,1,'#94a3b8')}},
+ origin:function(R){R(4,3,1,24,'#334155');R(4,27,24,1,'#334155');[[8,20,'#ef4444'],[12,15,'#ef4444'],[16,17,'#ef4444'],[20,10,'#ef4444'],[24,7,'#ef4444']].forEach(function(p){R(p[0],p[1],3,3,p[2])});R(7,22,18,1,'#3b82f6');R(9,19,3,0,'#3b82f6')},
+ slurm:function(R){for(var i=0;i<3;i++){R(5,4+i*9,22,7,'#64748b');R(7,6+i*9,10,3,'#1e293b');R(21,6+i*9,2,2,'#4ade80');R(24,6+i*9,2,2,i===1?'#facc15':'#4ade80')}},
+ sync:function(R,x){x.fillStyle='#94a3b8';for(var j=0;j<32;j++)for(var i=0;i<32;i++){var dx=i+.5-13,dy=j+.5-16,d=dx*dx+dy*dy;if(d<=12*12&&d>=9*9)x.fillRect(i,j,1,1)}R(23,15,7,2,'#fde047');R(28,11,3,10,'#475569');R(11,3,4,3,'#60a5fa');R(11,26,4,3,'#60a5fa')},
+ xps:function(R){R(4,24,24,4,'#94a3b8');for(var i=0;i<5;i++)R(4+i*3,6+i*3,2,2,'#fde047');R(16,22,2,2,'#fde047');R(20,16,2,2,'#38bdf8');R(23,11,2,2,'#38bdf8');R(26,6,2,2,'#38bdf8');R(26,4,4,1,'#334155')},
+ xas:function(R){R(3,27,26,1,'#475569');R(3,3,1,24,'#475569');for(var i=4;i<30;i++){var y=i<13?22:Math.round(9+Math.exp(-(i-13)/6)*4+Math.sin(i*.9)*1.4);R(i,y,1,2,'#e5484d')}},
+ arpes:function(R,x){R(2,22,8,5,'#94a3b8');R(2,3,1,1,'#fde047');for(var i=0;i<4;i++)R(2+i*2,4+i*3,2,2,'#fde047');x.fillStyle='#475569';for(var j=0;j<32;j++)for(var i=0;i<32;i++){var dx=i+.5-22,dy=j+.5-20,d=dx*dx+dy*dy;if(d<=10*10&&d>=8*8&&i>=22&&j<=20)x.fillRect(i,j,1,1)}R(9,19,2,2,'#38bdf8');R(13,16,2,2,'#38bdf8');R(17,12,2,2,'#38bdf8');R(21,9,2,2,'#38bdf8')},
+ cup:function(R){[[8,8],[20,8],[8,20],[20,20]].forEach(function(p){R(p[0],p[1],4,4,'#3b82f6')});[[14,9],[14,21],[8,14],[20,14]].forEach(function(p){R(p[0],p[1],3,3,'#ef4444')});R(12,9,2,2,'#cbd5e1');R(12,21,2,2,'#cbd5e1')},
+ oct:function(R){R(14,14,5,5,'#3b82f6');R(14,5,5,5,'#ef4444');R(14,23,5,5,'#ef4444');R(5,14,5,5,'#ef4444');R(23,14,5,5,'#ef4444');R(10,10,3,3,'#fca5a5');R(20,20,3,3,'#fca5a5');R(16,10,1,4,'#94a3b8');R(16,19,1,4,'#94a3b8')},
+ junc:function(R){R(3,6,26,6,'#38bdf8');R(3,14,26,4,'#e2e8f0');R(3,20,26,6,'#38bdf8');R(14,8,4,16,'#e5484d');R(12,15,8,2,'#fde047')},
+ dirac:function(R){[[16,4],[25,9],[25,20],[16,26],[7,20],[7,9]].forEach(function(p){R(p[0]-2,p[1]-2,4,4,'#14b8a6')});R(16,6,1,0,'#000');for(var i=0;i<6;i++){}R(10,7,6,1,'#94a3b8');R(19,7,6,1,'#94a3b8');R(24,12,1,6,'#94a3b8');R(10,24,6,1,'#94a3b8');R(19,24,6,1,'#94a3b8');R(7,12,1,6,'#94a3b8')}
+};
+function icUrl(k,w,h){var cv=document.createElement('canvas');cv.width=w||32;cv.height=h||32;var x=cv.getContext('2d');function R(a,b,ww,hh,c){x.fillStyle=c;x.fillRect(a,b,ww,hh)}IC2[k](R,x);return cv.toDataURL()}
+function icImg(k,px){return '<img class="ic2" alt="" width="'+px+'" height="'+px+'" src="'+icUrl(k)+'">'}
+
+var SYS=[
+ {ic:'cup',n:'銅氧化物與鎳氧化物（Cuprate、Nickelate）',w:'博士：2020–2025，FAU Erlangen',
+  m:'DFT+DMFT（Density Functional Theory + Dynamical Mean-Field Theory），用 CT-QMC（continuous-time Quantum Monte Carlo）求解；套件 w2dynamics、TRIQS；在 RRZE 的 HPC 上用 Slurm 排程。模型從 cluster model、dp 模型（Emery）降到 d 模型（Hubbard），比較準確度與計算成本。',
+  r:'找出 Cu–O 關聯對兩粒子觀測量的影響，以及電子關聯加上 p–d 混成如何影響鎳氧化物的光譜分布。第一作者：SciPost Phys. 18, 145；共同作者：arXiv:2412.14951。'},
+ {ic:'oct',n:'釕氧化物 Ca₂RuO₄',w:'實習：2019–2020，MPI CPfS（Dresden）',
+  m:'精確對角化（Exact Diagonalization，用 Quanty），full-multiplet cluster 計算磁化率與光電子能譜；把模型縮成含 Hund 耦合的 t₂g⁴ 最小模型，加上靜態平均場。',
+  r:'和實驗量測比較。結果顯示 Hund 耦合與 cluster 效應可以解釋自旋態轉變，並需要動態效應才能抓到光譜權重的轉移。'},
+ {ic:'junc',n:'激子約瑟夫森接面（Excitonic Josephson junction）',w:'碩士：2017–2019，國立交通大學',
+  m:'把指導教授寫的 Fortran LLG 求解器擴充，加入兩個凝聚體之間的相位偏壓；用 Origin 分析與畫圖。',
+  r:'描述週期性孤子解，以及注入與流出超流的關係。第一作者：Phys. Rev. Research 4, 013177。'},
+ {ic:'dirac',n:'SiC 上的過渡金屬吸附原子晶格（關聯 Dirac 費米子與平帶）',w:'共同作者：arXiv:2410.17165',
+  m:'屬於同一個研究組的相關計算工作，我是共同作者。',r:'題目：Engineering correlated Dirac fermions and flat bands on SiC with transition-metal ad-atom lattices。'}
+];
+var ITEMS={
+ data:[
+  {k:'py',n:'Python：NumPy、SciPy、Matplotlib',kw:['陣列運算','擬合','作圖'],how:'把模擬輸出讀進來，做統計、擬合、單位換算，畫成圖。Jupyter notebook 讓每一步分析都可以重跑。',phys:'數值運算本身不是物理，但「同樣的輸入得到同樣的圖」是物理結論可信的前提，所以我把分析寫成可重現的 notebook。',read:'看圖時先確認座標軸與單位，再看趨勢，最後才下結論。',semi:'晶圓圖、檢測資料的分析用的是同一套工具。'},
+  {k:'hdf',n:'HDF5：大量模擬輸出',kw:['階層式檔案','大資料','可重現'],how:'一次 DMFT 計算會產生很多陣列（格林函數、自能量、觀測量）。HDF5 把它們存成階層式的檔案，可以只讀需要的部分。',phys:'檔案格式不影響物理，但資料量大時，結構清楚的檔案讓篩選與比較參數容易很多。',read:'每個資料集都要記錄參數（溫度、摻雜、參數設定），否則之後無法對照。',semi:'製程與量測資料也是大量、多參數，需要同樣的整理習慣。'},
+  {k:'maxent',n:'Maximum Entropy 解析延拓（ΩMaxEnt）',kw:['解析延拓','降噪','光譜函數'],how:'QMC 算出的是虛頻率（Matsubara）上帶雜訊的格林函數，不能直接和實驗比。解析延拓把它轉成實頻率的光譜函數，才能對照 ARPES 這類量測。',phys:'格林函數 G(iωₙ) = ∫ A(ω)/(iωₙ − ω) dω。由 G 反推 A 是病態問題：很多不同的 A 都能解釋同一筆帶雜訊的資料。Maximum Entropy 在符合資料的解裡，選出資訊假設最少的那一個。',read:'結果要看對雜訊、設定的敏感度。細節（例如小峰）要小心，不能過度詮釋。',semi:'從帶雜訊的訊號還原可解釋的結果，和量測資料去雜訊是同一種思維。'},
+  {k:'origin',n:'Origin：作圖與分析',kw:['作圖','資料整理'],how:'碩士與實習期間，用 Origin 分析並畫出孤子解、光譜與磁化率的曲線。',phys:'重點是把模擬曲線和實驗曲線放在同一張圖比較。',read:'比較時要確認兩者的單位與歸一化方式一致。',semi:'製程報告常用類似工具比較不同批次的曲線。'},
+  {k:'slurm',n:'Slurm 與 HPC：大規模計算工作流程',kw:['Slurm','squeue / srun','參數探索'],how:'計算成本高的模型要拆成許多工作，用 Slurm 排程送到叢集上，再收集結果。',phys:'DMFT 在低溫、多軌道時計算量很大。分層模型（先用便宜的模型探索，再用貴的確認）是把計算成本控制在可行範圍的方法。',read:'工作要記錄參數與版本，失敗的工作要能追查原因。',semi:'製程條件的大量掃描（DOE）與這種工作流程類似。'}
+ ],
+ exp:[
+  {k:'sync',n:'同步輻射光源（Synchrotron）',kw:['儲存環','光束線','beamtime'],how:'接近光速的電子在儲存環中轉彎，發出又亮又可調波長的光（從紅外到 X 光），經光束線送到實驗站。NSRRC 是台灣新竹的同步輻射研究中心。',phys:'電子被磁鐵偏轉時輻射電磁波。能量越高，光越偏向前方且越亮。',read:'光束時間（beamtime）是固定排定的，實驗要在時限內完成，準備工作要做足。',semi:'晶圓廠也有精密、時程固定的量測，需要先準備好再上機。'},
+  {k:'xps',n:'XPS：X 光光電子能譜',kw:['元素','化學態','表面敏感'],how:'用 X 光把原子的內層電子打出來，量電子的動能，就知道它原來的束縛能。',phys:'動能 = 光子能量 − 束縛能 − 功函數。峰的位置對應元素與化學態。電子在固體裡走不遠，所以只看表面幾個 nm。',read:'看峰的位置（什麼元素、氧化態）與面積（含量）。',semi:'薄膜的成分與介面分析常用這類方法。'},
+  {k:'xas',n:'XAS：X 光吸收光譜',kw:['吸收邊','氧化態','局部結構'],how:'掃描光子能量，記錄樣品吸收多少。能量剛好夠把某個元素的內層電子激發時，吸收會突然上升。',phys:'吸收邊的位置對應元素；邊附近的形狀反映氧化態與周圍原子的對稱性。',read:'看吸收邊的位置與形狀，並和計算（例如 cluster 計算）比較。',semi:'可以分辨材料中某個元素的化學環境。'},
+  {k:'arpes',n:'ARPES：角解析光電子能譜',kw:['能帶','準粒子','超高真空'],how:'光電子能譜加上角度：同時量電子的動能和出射角，就得到電子能量與動量的關係。',phys:'平行於表面的動量在出射時守恆，所以出射角對應晶體動量 k。得到的 E(k) 就是能帶結構；峰寬與準粒子的壽命有關。樣品要在超高真空裡保持乾淨表面。',read:'看能帶色散（亮線的形狀）、峰寬，以及和 DFT 或 DMFT 光譜函數 A(k,ω) 的比較。',semi:'能帶結構是電晶體材料的基礎。ARPES 和我研究的準粒子直接相關，是我最能從原理講清楚的量測。'}
+ ]
+};
+function itemBtn(grp,i){var t=ITEMS[grp][i];return '<button type="button" class="itm" data-g="'+grp+'" data-i="'+i+'">'+icImg(t.k,64)+'<b>'+esc(t.n)+'</b><span>點圖看原理</span></button>'}
+function openItem(grp,i,from){
+  var t=ITEMS[grp][i];
+  show('<h3>'+esc(t.n)+'</h3><div class="ic2big">'+icImg(t.k,160)+'</div><div>'+t.kw.map(function(w){return '<span class="tag2">'+esc(w)+'</span>'}).join('')+'</div>'
+   +'<div class="sec"><h4>它在做什麼</h4><p>'+esc(t.how)+'</p></div><div class="sec"><h4>物理機制</h4><p>'+esc(t.phys)+'</p></div><div class="sec"><h4>怎麼讀</h4><p>'+esc(t.read)+'</p></div><div class="sec"><h4>和半導體的關係</h4><p>'+esc(t.semi)+'</p></div>'
+   +'<p style="margin-top:12px"><button class="btn" type="button" id="bk">◀ 回到上一頁</button></p>','--accent',from);
+  $('bk').addEventListener('click',function(){openSkill(grp==='data'?'data':'exp',from)});
+}
+function openSkill(k,from){
+  var h;
+  if(k==='sim'){
+    h='<h3>Simulation：量子系統的模擬</h3><p style="margin:0 0 8px">我做過幾種不同的系統：<b>cuprate、nickelate、ruthenate、excitonic junction</b>。賣點是同一套做法：先把系統縮成最小的物理模型，選好近似層級，算出能和實驗比較的量（光譜函數、磁化率、有效質量），再用實驗驗證背後的機制。</p>'
+     +'<div class="flowline"><span>最小模型</span><i>▶</i><span>數值求解</span><i>▶</i><span>後處理與降噪</span><i>▶</i><span>和實驗比較</span></div>'
+     +SYS.map(function(s){return '<div class="sys">'+icImg(s.ic,64)+'<div><b>'+esc(s.n)+'</b><div class="w">'+esc(s.w)+'</div><p><b>方法</b>　'+esc(s.m)+'</p><p><b>結果</b>　'+esc(s.r)+'</p></div></div>'}).join('')
+     +'<div class="note" style="--c:var(--tcad)">換到半導體：TCAD 也是「選近似層級、用實驗校準」，量子系統的模型與數值經驗可以直接遷移，缺的是 TCAD 軟體與載子輸運的實作。</div>';
+  }else if(k==='data'){
+    h='<h3>Data Analysis：我用的工具與方法</h3><p style="margin:0 0 8px">我的資料來源是大量、帶雜訊、多參數的模擬輸出。做法是把原始資料整理成能和實驗比較的觀測量（光譜函數、有效質量、磁化率），並寫成可重現的分析流程。點圖示看每個工具在做什麼。</p>'
+     +'<div class="itms">'+ITEMS.data.map(function(_,i){return itemBtn('data',i)}).join('')+'</div>';
+  }else{
+    h='<h3>Experiment & Collaboration</h3>'
+     +'<div class="sec"><h4>和 CPfS 的合作</h4><p>MPI CPfS（Max Planck Institute for Chemical Physics of Solids，Dresden）。2019–2020 在那裡實習，把 Ca₂RuO₄ 的計算結果和實驗量測比較，驗證相變背後的機制。博士期間，和模擬團隊（MPI-FKF）與實驗團隊（MPI-CPfS）合作：我把模擬的光譜函數、有效質量、磁化率拿去和實驗觀測量比較，一起判斷物理機制。</p></div>'
+     +'<div class="sec"><h4>在 NSRRC 量測過什麼</h4><p>2020 年 4 到 6 月，在台灣新竹的同步輻射研究中心（NSRRC）協助 <b>XPS、XAS、ARPES</b> 量測：操作儀器、整理數據回傳給專案負責人，在限時的光束時間內完成指定的量測任務。我是協助者，不是專案負責人。</p></div>'
+     +'<div class="sec"><h4>這些儀器（點圖看原理）</h4><div class="itms">'+ITEMS.exp.map(function(_,i){return itemBtn('exp',i)}).join('')+'</div></div>';
+  }
+  show(h,k==='sim'?'--tcad':k==='data'?'--yed':'--ae',from);
+  dbody.querySelectorAll('.itm').forEach(function(b){b.addEventListener('click',function(){openItem(b.dataset.g,+b.dataset.i,from)})});
+}
+(function(){
+  document.querySelectorAll('.skill').forEach(function(d){d.tabIndex=0;d.setAttribute('role','button');d.style.cursor='pointer';
+    var hint=document.createElement('em');hint.className='hint';hint.textContent='點我看詳細介紹';d.appendChild(hint);
+    function go(){openSkill(d.dataset.k,d)}d.addEventListener('click',go);d.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+  $('rolePanel').addEventListener('click',function(e){var c=e.target.closest('.chip[data-k]');if(c)openSkill(c.dataset.k,c)});
+})();
+
+/* ====================== d orbital + slides ====================== */
+(function(){
+  var cv=$('orbCv'),x=cv.getContext('2d');
+  for(var j=0;j<32;j++)for(var i=0;i<32;i++){var dx=i+.5-16,dy=j+.5-16,r=Math.sqrt(dx*dx+dy*dy);if(r<1.8)continue;var th=Math.atan2(dy,dx),c=Math.cos(2*th);
+    if(r<=14.5*Math.pow(Math.abs(c),.55)){x.fillStyle=c>0?'#3b82f6':'#ef4444';x.fillRect(i,j,1,1)}}
+  x.fillStyle='#fde047';x.fillRect(15,15,2,2);
+  function openSlides(){
+    show('<h3>研究介紹：TYRA 簡報</h3><p style="margin:0 0 8px;font-size:14px">這是我之前的簡報，之後會改成互動式的網頁介紹。</p>'
+     +'<iframe class="slides" src="slides/tyra.pdf#view=FitH" title="TYRA slides"></iframe>'
+     +'<p style="margin:8px 0 0;font-size:13px">看不到簡報的話（例如手機）：<a href="slides/tyra.pdf" target="_blank" rel="noopener">在新分頁開啟 PDF</a></p>','--tcad',$('meBtn'));
+    $('dlg').style.width='min(980px,100%)';
+  }
+  $('meBtn').addEventListener('click',openSlides);
+})();
+window.addEventListener('load',fitToc);try{document.fonts.ready.then(fitToc)}catch(e){}
 
 </script>
